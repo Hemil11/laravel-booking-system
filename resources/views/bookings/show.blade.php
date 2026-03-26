@@ -10,6 +10,14 @@
         <p><strong>Start:</strong> {{ substr($booking->time, 0, 5) }}</p>
         <p><strong>Staff:</strong> {{ $booking->staff?->full_name }}</p>
         <p><strong>Service:</strong> {{ $booking->service?->name }} ({{ $booking->service?->duration }} min)</p>
+        @if ($booking->invoice)
+            <hr style="border: 0; border-top: 1px solid var(--border); margin: 1rem 0;">
+            <p><strong>Invoice #:</strong> {{ $booking->invoice->id }}</p>
+            <p><strong>Amount:</strong> {{ number_format((float) $booking->invoice->amount, 2) }}</p>
+            <p><strong>Tax:</strong> {{ number_format((float) $booking->invoice->tax, 2) }}</p>
+            <p><strong>Total:</strong> {{ number_format((float) $booking->invoice->total, 2) }}</p>
+            <p><strong>Invoice status:</strong> {{ $booking->invoice->status }}</p>
+        @endif
         @if ($booking->notes)
             <p><strong>Notes:</strong> {{ $booking->notes }}</p>
         @endif
@@ -28,6 +36,19 @@
                 <form action="{{ route('bookings.cancel', $booking) }}" method="post" style="display:inline;" onsubmit="return confirm('Cancel this booking?');">
                     @csrf
                     <button type="submit" class="btn btn-danger">Cancel booking</button>
+                </form>
+            @endif
+
+            @if ($booking->invoice && $booking->status !== 'cancelled')
+                <form action="{{ route('invoices.mock-payment', $booking->invoice) }}" method="post" style="display:inline;">
+                    @csrf
+                    <input type="hidden" name="result" value="success">
+                    <button type="submit" class="btn btn-primary">Mock payment success</button>
+                </form>
+                <form action="{{ route('invoices.mock-payment', $booking->invoice) }}" method="post" style="display:inline;">
+                    @csrf
+                    <input type="hidden" name="result" value="failure">
+                    <button type="submit" class="btn btn-ghost">Mock payment failure</button>
                 </form>
             @endif
         </div>

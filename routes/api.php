@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AvailableSlotController;
 use App\Http\Controllers\Api\BookingController;
+use App\Http\Controllers\Api\InvoicePaymentController;
 use App\Http\Controllers\Api\ServiceController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,4 +16,5 @@ Route::get('available-slots', AvailableSlotController::class)->name('api.availab
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('bookings', [BookingController::class, 'store'])->name('api.bookings.store');
+    Route::post('invoices/{invoice}/mock-payment', [InvoicePaymentController::class, 'process'])->name('api.invoices.mock-payment');
 });
