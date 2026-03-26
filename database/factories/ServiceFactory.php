@@ -20,11 +20,8 @@ class ServiceFactory extends Factory
         return [
             // `services.name` is UNIQUE in MySQL, so include a UUID suffix to avoid collisions across multiple seeder runs.
             'name' => $this->faker->words(3, true) . ' ' . Str::uuid(),
-            'description' => $this->faker->paragraph(2),
-            'duration_minutes' => $duration,
-            'base_price_cents' => $this->faker->numberBetween(1500, 8000) * 10,
-            'currency' => 'USD',
-            'is_active' => true,
+            'duration' => $duration,
+            'price' => $this->faker->randomFloat(2, 15, 800),
         ];
     }
 }

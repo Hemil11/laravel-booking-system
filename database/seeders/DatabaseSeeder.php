@@ -81,7 +81,7 @@ class DatabaseSeeder extends Seeder
             $bookingsToCreate = 5;
             for ($i = 0; $i < $bookingsToCreate; $i++) {
                 $service = $offeredServices->random();
-                $duration = (int) $service->duration_minutes;
+                $duration = (int) $service->duration;
 
                 if ($current->copy()->addMinutes($duration)->greaterThan($end)) {
                     break;

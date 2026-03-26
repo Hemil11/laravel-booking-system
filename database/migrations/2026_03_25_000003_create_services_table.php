@@ -11,15 +11,11 @@ return new class extends Migration
         Schema::create('services', function (Blueprint $table) {
             $table->id();
             $table->string('name', 120);
-            $table->text('description')->nullable();
-            $table->unsignedSmallInteger('duration_minutes')->default(30);
-            $table->unsignedInteger('base_price_cents')->nullable();
-            $table->char('currency', 3)->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->unsignedSmallInteger('duration')->default(30);
+            $table->decimal('price', 10, 2)->default(0);
             $table->softDeletes();
             $table->timestamps();
 
-            $table->index(['is_active']);
             $table->unique(['name']);
         });
     }
@@ -29,4 +25,3 @@ return new class extends Migration
         Schema::dropIfExists('services');
     }
 };
-

@@ -44,7 +44,7 @@ class BookingFactory extends Factory
 
             $booking->loadMissing('service');
 
-            $duration = (int) ($booking->service?->duration_minutes ?? 30);
+            $duration = (int) ($booking->service?->duration ?? 30);
             $slotCount = $duration > 0 ? intdiv($duration, 30) : 1;
 
             $date = $booking->date instanceof Carbon

@@ -15,15 +15,13 @@ class Service extends Model
 
     protected $fillable = [
         'name',
-        'description',
-        'duration_minutes',
-        'base_price_cents',
-        'currency',
-        'is_active',
+        'duration',
+        'price',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
+        'duration' => 'integer',
+        'price' => 'decimal:2',
     ];
 
     public function staffs(): BelongsToMany
@@ -39,4 +37,3 @@ class Service extends Model
         return $this->hasMany(Booking::class);
     }
 }
-
