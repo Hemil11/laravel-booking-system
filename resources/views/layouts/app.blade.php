@@ -38,16 +38,25 @@
             <strong><a href="{{ url('/') }}">{{ config('app.name') }}</a></strong>
             <nav class="actions">
                 @auth
-                    @if (auth()->user()->isAdmin())
+                    @if (auth()->user()->hasPermission('manage_users'))
                         <a href="{{ route('admin.dashboard') }}">Admin</a>
                     @endif
+                    <a href="{{ route('profile.edit') }}">Profile</a>
                     <a href="{{ route('bookings.index') }}">Bookings</a>
                     <a href="{{ route('bookings.create') }}">New booking</a>
                 @endauth
                 <a href="{{ route('services.index') }}">Services</a>
-                <a href="{{ route('services.create') }}">New service</a>
+                @auth
+                    @if (auth()->user()->hasPermission('manage_services'))
+                        <a href="{{ route('services.create') }}">New service</a>
+                    @endif
+                @endauth
                 <a href="{{ route('staff.index') }}">Staff</a>
-                <a href="{{ route('staff.create') }}">New staff</a>
+                @auth
+                    @if (auth()->user()->hasPermission('manage_staff'))
+                        <a href="{{ route('staff.create') }}">New staff</a>
+                    @endif
+                @endauth
                 @auth
                     <form action="{{ route('logout') }}" method="post" style="display:inline;">
                         @csrf

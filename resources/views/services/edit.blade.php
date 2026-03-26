@@ -5,7 +5,7 @@
 @section('content')
     <h1>Edit service</h1>
     <div class="card">
-        <form action="{{ route('services.update', $service) }}" method="post">
+        <form action="{{ route('services.update', $service) }}" method="post" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             @include('services._form', [

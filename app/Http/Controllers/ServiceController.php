@@ -5,11 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreServiceRequest;
 use App\Http\Requests\UpdateServiceRequest;
 use App\Models\Service;
+use App\Services\Media\FileUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class ServiceController extends Controller
 {
+    public function __construct(
+        protected FileUploadService $fileUploadService
+    ) {
+        $this->middleware(['auth', 'permission:manage_services'])->only(['create', 'store', 'edit', 'update', 'destroy']);
+    }
+
     public function index(): View
     {
         $services = Service::query()
@@ -45,7 +52,17 @@ class ServiceController extends Controller
 
     public function update(UpdateServiceRequest $request, Service $service): RedirectResponse
     {
-        $service->update($request->validated());
+        $service->update($request->safe()->only(['name', 'duration', 'price']));
+
+        if ($request->hasFile('image')) {
+            $this->fileUploadService->delete($service->image_path);
+            $service->update([
+                'image_path' => $this->fileUploadService->store(
+                    $request->file('image'),
+                    'services/'.$service->id
+                ),
+            ]);
+        }
 
         return redirect()
             ->route('services.show', $service)
@@ -54,6 +71,7 @@ class ServiceController extends Controller
 
     public function destroy(Service $service): RedirectResponse
     {
+        $this->fileUploadService->delete($service->image_path);
         $service->delete();
 
         return redirect()

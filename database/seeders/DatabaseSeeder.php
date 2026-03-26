@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Booking;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Service;
 use App\Models\Staff;
@@ -18,9 +19,31 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
+        $permissionNames = [
+            'manage_users',
+            'manage_bookings',
+            'manage_services',
+            'manage_staff',
+        ];
+
+        $permissions = collect($permissionNames)->mapWithKeys(function (string $name) {
+            return [
+                $name => Permission::firstOrCreate(
+                    ['name' => $name],
+                    ['guard_name' => 'web']
+                ),
+            ];
+        });
+
         $adminRole = Role::firstOrCreate(['name' => 'admin'], ['guard_name' => 'web']);
         $staffRole = Role::firstOrCreate(['name' => 'staff'], ['guard_name' => 'web']);
         $customerRole = Role::firstOrCreate(['name' => 'customer'], ['guard_name' => 'web']);
+
+        $adminRole->permissions()->sync($permissions->pluck('id')->all());
+        $staffRole->permissions()->sync([
+            $permissions['manage_bookings']->id,
+        ]);
+        $customerRole->permissions()->sync([]);
 
         // Services
         $services = Service::factory()->count(10)->create();
@@ -103,4 +126,3 @@ class DatabaseSeeder extends Seeder
         }
     }
 }
-

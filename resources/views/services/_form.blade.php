@@ -21,6 +21,16 @@
     @error('price')<div class="error">{{ $message }}</div>@enderror
 </div>
 
+<div class="field">
+    <label for="image">Image (optional)</label>
+    <input id="image" name="image" type="file" accept="image/jpeg,image/png,image/gif,image/webp">
+    @error('image')<div class="error">{{ $message }}</div>@enderror
+    @if ($service?->image_path)
+        <p style="margin: 0.5rem 0 0; font-size: 0.875rem; color: var(--muted);">Current image:</p>
+        <img src="{{ media_url($service->image_path) }}" alt="" style="max-width: 200px; margin-top: 0.35rem; border-radius: 6px; border: 1px solid var(--border);">
+    @endif
+</div>
+
 <div class="actions">
     <button type="submit" class="btn btn-primary">{{ $submitLabel }}</button>
     <a href="{{ $cancelUrl }}" class="btn btn-ghost">Cancel</a>

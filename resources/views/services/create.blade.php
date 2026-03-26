@@ -5,7 +5,7 @@
 @section('content')
     <h1>New service</h1>
     <div class="card">
-        <form action="{{ route('services.store') }}" method="post">
+        <form action="{{ route('services.store') }}" method="post" enctype="multipart/form-data">
             @csrf
             @include('services._form', [
                 'service' => null,

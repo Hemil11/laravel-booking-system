@@ -7,11 +7,17 @@ use App\Http\Requests\UpdateStaffRequest;
 use App\Models\Service;
 use App\Models\Staff;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class StaffController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'permission:manage_staff'])->only(['create', 'store', 'edit', 'update', 'destroy']);
+    }
+
     public function index(): View
     {
         $staffMembers = Staff::query()
@@ -84,7 +90,7 @@ class StaffController extends Controller
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection<int, User>
+     * @return Collection<int, User>
      */
     private function usersAvailableForStaff(?Staff $except = null)
     {

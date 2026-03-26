@@ -5,6 +5,11 @@
 @section('content')
     <h1>{{ $service->name }}</h1>
     <div class="card">
+        @if ($service->image_path)
+            <p style="margin: 0 0 1rem;">
+                <img src="{{ media_url($service->image_path) }}" alt="" style="max-width: 100%; max-height: 280px; border-radius: 8px; border: 1px solid var(--border);">
+            </p>
+        @endif
         <p><strong>Duration:</strong> {{ $service->duration }} minutes</p>
         <p><strong>Price:</strong> {{ number_format((float) $service->price, 2) }}</p>
         <p class="actions" style="margin-top: 1rem;">

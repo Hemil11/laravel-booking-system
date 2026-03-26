@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -18,6 +19,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar_path',
     ];
 
     protected $hidden = [
@@ -48,8 +50,37 @@ class User extends Authenticatable
         return $this->hasOne(Staff::class, 'user_id');
     }
 
-    public function isAdmin(): bool
+    /**
+     * Whether the user has a permission granted through any assigned role.
+     */
+    public function hasPermission(string $name): bool
     {
-        return $this->roles()->where('name', 'admin')->exists();
+        return $this->roles()->whereHas('permissions', function (Builder $query) use ($name) {
+            $query->where('permissions.name', $name);
+        })->exists();
+    }
+
+    /**
+     * @param  list<string>  $names
+     */
+    public function hasAllPermissions(array $names): bool
+    {
+        foreach ($names as $name) {
+            if (! $this->hasPermission($name)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param  list<string>  $names
+     */
+    public function hasAnyPermission(array $names): bool
+    {
+        return $this->roles()->whereHas('permissions', function (Builder $query) use ($names) {
+            $query->whereIn('permissions.name', $names);
+        })->exists();
     }
 }
