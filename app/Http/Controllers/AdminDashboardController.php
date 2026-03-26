@@ -15,13 +15,17 @@ class AdminDashboardController extends Controller
 {
     public function __invoke(): View
     {
+        $totalBookings = Booking::query()->count();
+        $mockAverageBookingValue = 72.50;
+
         $stats = [
             'users' => User::query()->count(),
-            'bookings' => Booking::query()->count(),
+            'bookings' => $totalBookings,
             'services' => Service::query()->count(),
             'todays_bookings' => Booking::query()
                 ->whereDate('date', now()->toDateString())
                 ->count(),
+            'revenue_mock' => round($totalBookings * $mockAverageBookingValue, 2),
         ];
 
         return view('admin.dashboard', compact('stats'));

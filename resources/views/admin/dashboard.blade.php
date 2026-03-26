@@ -1,49 +1,40 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Admin dashboard — ' . config('app.name'))
 
 @section('content')
-<h1 class="page-title">Dashboard</h1>
-<p class="page-subtitle">A quick overview of booking platform activity.</p>
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-3">
+        <div>
+            <h1 class="text-h1 text-text">Dashboard</h1>
+            <p class="mt-2 text-small text-text-muted">A quick overview of booking platform activity.</p>
+        </div>
+        <a href="{{ route('bookings.create') }}" class="btn-primary">Create booking</a>
+    </div>
 
-<div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="text-secondary small">Total users</div>
-                <div class="display-6 fw-semibold">{{ number_format($stats['users']) }}</div>
-            </div>
-        </div>
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        <article class="rounded-2xl border border-border bg-background-elevated p-6 shadow-soft">
+            <p class="text-small text-text-muted">Total users</p>
+            <p class="mt-2 text-display-md text-text">{{ number_format($stats['users']) }}</p>
+        </article>
+        <article class="rounded-2xl border border-border bg-background-elevated p-6 shadow-soft">
+            <p class="text-small text-text-muted">Total bookings</p>
+            <p class="mt-2 text-display-md text-text">{{ number_format($stats['bookings']) }}</p>
+        </article>
+        <article class="rounded-2xl border border-border bg-background-elevated p-6 shadow-soft">
+            <p class="text-small text-text-muted">Total services</p>
+            <p class="mt-2 text-display-md text-text">{{ number_format($stats['services']) }}</p>
+        </article>
+        <article class="rounded-2xl border border-border bg-background-elevated p-6 shadow-soft">
+            <p class="text-small text-text-muted">Today's bookings</p>
+            <p class="mt-2 text-display-md text-text">{{ number_format($stats['todays_bookings']) }}</p>
+        </article>
+        <article class="rounded-2xl border border-border bg-background-elevated p-6 shadow-soft">
+            <p class="text-small text-text-muted">Revenue (mock)</p>
+            <p class="mt-2 text-display-md text-text">${{ number_format((float) $stats['revenue_mock'], 2) }}</p>
+        </article>
     </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="text-secondary small">Total bookings</div>
-                <div class="display-6 fw-semibold">{{ number_format($stats['bookings']) }}</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="text-secondary small">Total services</div>
-                <div class="display-6 fw-semibold">{{ number_format($stats['services']) }}</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-                <div class="text-secondary small">Today's bookings</div>
-                <div class="display-6 fw-semibold">{{ number_format($stats['todays_bookings']) }}</div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="card border-0 shadow-sm">
-    <div class="card-body text-secondary">
+    <div class="mt-8 rounded-2xl border border-border bg-background-elevated p-6 text-sm text-text-muted shadow-soft">
         "Today" uses app timezone (<code>{{ config('app.timezone') }}</code>) and matches appointment date records.
     </div>
-</div>
 @endsection

@@ -23,13 +23,31 @@ class BookingController extends Controller
 
     public function index(): View
     {
-        $bookings = request()->user()
-            ->bookings()
-            ->with(['staff', 'service'])
-            ->latest()
-            ->paginate(15);
+        $user = request()->user();
+        $search = trim((string) request()->query('search', ''));
 
-        return view('bookings.index', compact('bookings'));
+        $bookingsQuery = $user->hasPermission('manage_bookings')
+            ? Booking::query()
+            : $user->bookings();
+
+        $bookings = $bookingsQuery
+            ->with(['staff', 'service'])
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($inner) use ($search) {
+                    $inner->where('status', 'like', '%'.$search.'%')
+                        ->orWhereHas('staff', function ($staffQuery) use ($search) {
+                            $staffQuery->where('full_name', 'like', '%'.$search.'%');
+                        })
+                        ->orWhereHas('service', function ($serviceQuery) use ($search) {
+                            $serviceQuery->where('name', 'like', '%'.$search.'%');
+                        });
+                });
+            })
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('bookings.index', compact('bookings', 'search'));
     }
 
     public function create(): View

@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@config '../../tailwind.config.js';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -6,6 +7,134 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+}
+
+@layer base {
+    body {
+        @apply bg-background text-text font-sans text-body antialiased;
+    }
+
+    h1 {
+        @apply text-h1 font-bold tracking-tight text-text;
+    }
+
+    h2 {
+        @apply text-h2 font-bold tracking-tight text-text;
+    }
+
+    h3 {
+        @apply text-h3 font-semibold text-text;
+    }
+
+    p {
+        @apply text-body text-text-muted;
+    }
+}
+
+@layer components {
+    .page-container {
+        @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+    }
+
+    .section-wrap {
+        @apply py-10 sm:py-12 lg:py-14;
+    }
+
+    .surface {
+        @apply rounded-2xl border border-border/90 bg-background-elevated p-6 sm:p-8 shadow-soft;
+    }
+
+    .btn {
+        @apply inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60;
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center justify-center rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-text-inverse transition-all duration-200 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60;
+    }
+
+    .btn-secondary {
+        @apply inline-flex items-center justify-center rounded-xl border border-border-strong bg-background-elevated px-4 py-2.5 text-sm font-semibold text-text transition-all duration-200 hover:bg-background-muted focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60;
+    }
+
+    .btn-danger {
+        @apply inline-flex items-center justify-center rounded-xl bg-danger px-4 py-2.5 text-sm font-semibold text-text-inverse transition-all duration-200 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60;
+    }
+
+    .card {
+        @apply rounded-2xl border border-border/90 bg-background-elevated p-6 sm:p-8 shadow-soft;
+    }
+
+    .card-hover {
+        @apply transition-all duration-200 hover:-translate-y-0.5 hover:shadow-soft;
+    }
+
+    .input {
+        @apply w-full rounded-xl border border-border bg-white px-3 py-2.5 text-sm text-text placeholder:text-text-subtle focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200;
+    }
+
+    .hero {
+        @apply py-12 sm:py-16;
+    }
+
+    .hero-grid {
+        @apply grid gap-6 lg:grid-cols-2 lg:items-center;
+    }
+
+    .hero h1 {
+        @apply text-display-md text-text;
+    }
+
+    .hero p {
+        @apply mt-3 text-body text-text-muted;
+    }
+
+    .hero-card {
+        @apply rounded-2xl border border-border/90 bg-background-elevated p-6 sm:p-8 shadow-soft;
+    }
+
+    .section {
+        @apply py-10 sm:py-12;
+    }
+
+    .content-section {
+        @apply rounded-3xl border border-border/80 bg-white p-6 shadow-soft sm:p-8 lg:p-10;
+    }
+
+    .content-section-alt {
+        @apply rounded-3xl border border-border/80 bg-slate-50 p-6 shadow-soft sm:p-8 lg:p-10;
+    }
+
+    .section-stack {
+        @apply space-y-6 sm:space-y-8;
+    }
+
+    .section-divider {
+        @apply border-t border-border/70 pt-8 sm:pt-10;
+    }
+
+    .section-title {
+        @apply mb-3 text-h2 text-text;
+    }
+
+    .grid {
+        @apply grid gap-4 md:grid-cols-2 lg:grid-cols-3;
+    }
+
+    .service-card {
+        @apply group rounded-2xl border border-slate-200/90 bg-background-elevated p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:border-brand-200 hover:shadow-xl;
+    }
+
+    .service-meta {
+        @apply mt-2 text-small text-text-subtle;
+    }
+
+    .service-price {
+        @apply mt-5 rounded-xl border border-brand-100 bg-brand-50/70 px-4 py-3 text-xl font-bold text-brand-700;
+    }
+
+    .service-button {
+        @apply mt-5 inline-flex w-full items-center justify-center rounded-xl border border-brand-200 bg-white px-4 py-2.5 text-sm font-semibold text-brand-700 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-600 hover:text-white hover:shadow-md focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2;
+    }
 }

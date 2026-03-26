@@ -3,10 +3,12 @@
 @section('title', 'Edit service')
 
 @section('content')
-    <h1 class="page-title">Edit service</h1>
-    <p class="page-subtitle">Update service details and media.</p>
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
+    <div class="mb-8">
+        <h1 class="text-h1 text-text">Edit service</h1>
+        <p class="mt-2 text-small text-text-muted">Update service details and media.</p>
+    </div>
+    <div class="card">
+        <div>
         <form action="{{ route('services.update', $service) }}" method="post" enctype="multipart/form-data">
             @csrf
             @method('PUT')

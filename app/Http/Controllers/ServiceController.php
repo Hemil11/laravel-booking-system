@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateServiceRequest;
 use App\Models\Service;
 use App\Services\Media\FileUploadService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ServiceController extends Controller
@@ -17,13 +18,19 @@ class ServiceController extends Controller
         $this->middleware(['auth', 'permission:manage_services'])->only(['create', 'store', 'edit', 'update', 'destroy']);
     }
 
-    public function index(): View
+    public function index(Request $request): View
     {
-        $services = Service::query()
-            ->latest()
-            ->paginate(15);
+        $search = trim((string) $request->query('search', ''));
 
-        return view('services.index', compact('services'));
+        $services = Service::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where('name', 'like', '%'.$search.'%');
+            })
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('services.index', compact('services', 'search'));
     }
 
     public function create(): View

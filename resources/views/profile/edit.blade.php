@@ -3,48 +3,53 @@
 @section('title', 'Your profile')
 
 @section('content')
-    <h1>Your profile</h1>
+    <div class="mb-8">
+        <h1 class="text-h1 text-text">Your profile</h1>
+        <p class="mt-2 text-small text-text-muted">Update account details, avatar, and password.</p>
+    </div>
     <div class="card">
         <form action="{{ route('profile.update') }}" method="post" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
-            <div class="field">
-                <label for="name">Name</label>
-                <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}" required maxlength="255" autocomplete="name">
-                @error('name')<div class="error">{{ $message }}</div>@enderror
-            </div>
+            <div class="space-y-5">
+                <div class="space-y-1.5">
+                    <label for="name" class="block text-sm font-medium text-text">Name</label>
+                    <input id="name" name="name" type="text" class="input @error('name') border-danger focus:border-danger focus:ring-red-200 @enderror" value="{{ old('name', $user->name) }}" required maxlength="255" autocomplete="name">
+                    @error('name')<div class="mt-1 text-xs font-medium text-danger">{{ $message }}</div>@enderror
+                </div>
 
-            <div class="field">
-                <label for="email">Email</label>
-                <input id="email" name="email" type="email" value="{{ old('email', $user->email) }}" required autocomplete="email">
-                @error('email')<div class="error">{{ $message }}</div>@enderror
-            </div>
+                <div class="space-y-1.5">
+                    <label for="email" class="block text-sm font-medium text-text">Email</label>
+                    <input id="email" name="email" type="email" class="input @error('email') border-danger focus:border-danger focus:ring-red-200 @enderror" value="{{ old('email', $user->email) }}" required autocomplete="email">
+                    @error('email')<div class="mt-1 text-xs font-medium text-danger">{{ $message }}</div>@enderror
+                </div>
 
-            <div class="field">
-                <label for="avatar">Profile photo (optional)</label>
-                <input id="avatar" name="avatar" type="file" accept="image/jpeg,image/png,image/gif,image/webp">
-                @error('avatar')<div class="error">{{ $message }}</div>@enderror
+                <div class="space-y-1.5">
+                    <label for="avatar" class="block text-sm font-medium text-text">Profile photo (optional)</label>
+                    <input id="avatar" name="avatar" type="file" class="input py-2 @error('avatar') border-danger focus:border-danger focus:ring-red-200 @enderror" accept="image/jpeg,image/png,image/gif,image/webp">
+                    @error('avatar')<div class="mt-1 text-xs font-medium text-danger">{{ $message }}</div>@enderror
                 @if ($user->avatar_path)
-                    <p style="margin: 0.5rem 0 0; font-size: 0.875rem; color: var(--muted);">Current photo:</p>
-                    <img src="{{ media_url($user->avatar_path) }}" alt="" style="max-width: 120px; margin-top: 0.35rem; border-radius: 50%; border: 1px solid var(--border);">
+                        <p class="mt-2 text-small text-text-muted">Current photo:</p>
+                        <img src="{{ media_url($user->avatar_path) }}" alt="" class="mt-1 max-w-[120px] rounded-full border border-border">
                 @endif
-            </div>
+                </div>
 
-            <div class="field">
-                <label for="password">New password (optional)</label>
-                <input id="password" name="password" type="password" autocomplete="new-password">
-                @error('password')<div class="error">{{ $message }}</div>@enderror
-            </div>
+                <div class="space-y-1.5">
+                    <label for="password" class="block text-sm font-medium text-text">New password (optional)</label>
+                    <input id="password" name="password" type="password" class="input @error('password') border-danger focus:border-danger focus:ring-red-200 @enderror" autocomplete="new-password">
+                    @error('password')<div class="mt-1 text-xs font-medium text-danger">{{ $message }}</div>@enderror
+                </div>
 
-            <div class="field">
-                <label for="password_confirmation">Confirm new password</label>
-                <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password">
-            </div>
+                <div class="space-y-1.5">
+                    <label for="password_confirmation" class="block text-sm font-medium text-text">Confirm new password</label>
+                    <input id="password_confirmation" name="password_confirmation" type="password" class="input" autocomplete="new-password">
+                </div>
 
-            <div class="actions">
-                <button type="submit" class="btn btn-primary">Save</button>
-                <a href="{{ url('/') }}" class="btn btn-ghost">Cancel</a>
+                <div class="flex flex-wrap gap-2 pt-1">
+                    <x-button type="submit">Save</x-button>
+                    <x-button variant="outline" href="{{ url('/') }}">Cancel</x-button>
+                </div>
             </div>
         </form>
     </div>

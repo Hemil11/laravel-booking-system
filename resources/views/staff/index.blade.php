@@ -1,55 +1,74 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Staff')
 
 @section('content')
-    <h1>Staff</h1>
-    <p style="color: var(--muted); margin-top: 0;">Staff profiles linked to users and services.</p>
-    <p><a href="{{ route('staff.create') }}" class="btn btn-primary">Add staff</a></p>
-
-    <div class="card" style="margin-top: 1rem; padding: 0;">
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>User</th>
-                    <th>Hours</th>
-                    <th>Services</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($staffMembers as $member)
-                    <tr>
-                        <td><a href="{{ route('staff.show', $member) }}">{{ $member->full_name }}</a></td>
-                        <td>{{ $member->user?->email ?? '—' }}</td>
-                        <td>
-                            @if ($member->start_time && $member->end_time)
-                                {{ substr($member->start_time, 0, 5) }} – {{ substr($member->end_time, 0, 5) }}
-                            @else
-                                —
-                            @endif
-                        </td>
-                        <td>{{ $member->services->count() }}</td>
-                        <td class="actions">
-                            <a href="{{ route('staff.edit', $member) }}">Edit</a>
-                            <form action="{{ route('staff.destroy', $member) }}" method="post" style="display:inline;" onsubmit="return confirm('Remove this staff profile?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.8125rem;">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="5" style="color: var(--muted);">No staff yet.</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+    <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
+        <div>
+            <h1 class="text-h1 text-text">Staff</h1>
+            <p class="mt-1 text-small text-text-muted">Staff profiles linked to users and services.</p>
+        </div>
+        <x-button href="{{ route('staff.create') }}">Add staff</x-button>
     </div>
 
-    <div style="margin-top: 1rem;">
+    <x-card class="mb-4" header="Search staff">
+        <form method="get" class="grid gap-3 sm:grid-cols-[1fr_auto_auto]">
+            <x-form.input name="search" label="Keyword" :value="$search ?? ''" placeholder="Name, user, or email..." />
+            <div class="self-end">
+                <x-button type="submit">Search</x-button>
+            </div>
+            <div class="self-end">
+                <x-button variant="outline" href="{{ route('staff.index') }}">Reset</x-button>
+            </div>
+        </form>
+    </x-card>
+
+    <x-table>
+        <x-slot:head>
+            <th class="px-4 py-3">Name</th>
+            <th class="px-4 py-3">User</th>
+            <th class="px-4 py-3">Hours</th>
+            <th class="px-4 py-3">Services</th>
+            <th class="px-4 py-3">Status</th>
+            <th class="px-4 py-3 text-right">Actions</th>
+        </x-slot:head>
+
+        @forelse ($staffMembers as $member)
+            <tr>
+                <td class="px-4 py-3 font-medium">
+                    <a href="{{ route('staff.show', $member) }}" class="text-brand-700 hover:underline">{{ $member->full_name }}</a>
+                </td>
+                <td class="px-4 py-3">{{ $member->user?->email ?? '—' }}</td>
+                <td class="px-4 py-3">
+                    @if ($member->start_time && $member->end_time)
+                        {{ substr($member->start_time, 0, 5) }} - {{ substr($member->end_time, 0, 5) }}
+                    @else
+                        —
+                    @endif
+                </td>
+                <td class="px-4 py-3">{{ $member->services->count() }}</td>
+                <td class="px-4 py-3">
+                    <x-badge :status="$member->is_active ? 'active' : 'inactive'" />
+                </td>
+                <td class="px-4 py-3">
+                    <div class="flex justify-end gap-2">
+                        <x-button variant="secondary" href="{{ route('staff.edit', $member) }}">Edit</x-button>
+                        <form action="{{ route('staff.destroy', $member) }}" method="post" onsubmit="return confirm('Remove this staff profile?');">
+                            @csrf
+                            @method('DELETE')
+                            <x-button class="!bg-danger hover:!bg-red-700" type="submit">Delete</x-button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        @empty
+            <tr>
+                <td colspan="6" class="px-4 py-8 text-center text-text-subtle">No staff found.</td>
+            </tr>
+        @endforelse
+    </x-table>
+
+    <div class="mt-4">
         {{ $staffMembers->links() }}
     </div>
 @endsection

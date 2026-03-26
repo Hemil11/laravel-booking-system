@@ -9,6 +9,7 @@ use App\Models\Staff;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class StaffController extends Controller
@@ -18,14 +19,26 @@ class StaffController extends Controller
         $this->middleware(['auth', 'permission:manage_staff'])->only(['create', 'store', 'edit', 'update', 'destroy']);
     }
 
-    public function index(): View
+    public function index(Request $request): View
     {
+        $search = trim((string) $request->query('search', ''));
+
         $staffMembers = Staff::query()
             ->with(['user', 'services'])
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($inner) use ($search) {
+                    $inner->where('full_name', 'like', '%'.$search.'%')
+                        ->orWhereHas('user', function ($userQuery) use ($search) {
+                            $userQuery->where('name', 'like', '%'.$search.'%')
+                                ->orWhere('email', 'like', '%'.$search.'%');
+                        });
+                });
+            })
             ->latest()
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
-        return view('staff.index', compact('staffMembers'));
+        return view('staff.index', compact('staffMembers', 'search'));
     }
 
     public function create(): View

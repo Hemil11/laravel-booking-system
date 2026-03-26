@@ -3,10 +3,12 @@
 @section('title', 'New service')
 
 @section('content')
-    <h1 class="page-title">New service</h1>
-    <p class="page-subtitle">Add a new service with duration, price, and optional image.</p>
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
+    <div class="mb-8">
+        <h1 class="text-h1 text-text">New service</h1>
+        <p class="mt-2 text-small text-text-muted">Add a new service with duration, price, and optional image.</p>
+    </div>
+    <div class="card">
+        <div>
         <form action="{{ route('services.store') }}" method="post" enctype="multipart/form-data">
             @csrf
             @include('services._form', [
