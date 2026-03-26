@@ -24,7 +24,7 @@
         th { color: var(--muted); font-weight: 500; }
         .flash { padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
         label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.35rem; }
-        input[type="text"], input[type="number"], input[type="time"], select, textarea { width: 100%; max-width: 420px; padding: 0.5rem 0.65rem; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; }
+        input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="date"], input[type="time"], select, textarea { width: 100%; max-width: 420px; padding: 0.5rem 0.65rem; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; }
         textarea { max-width: 100%; min-height: 80px; resize: vertical; }
         select[multiple] { max-width: 100%; min-height: 120px; }
         .field { margin-bottom: 1rem; }
@@ -37,10 +37,22 @@
         <header>
             <strong><a href="{{ url('/') }}">{{ config('app.name') }}</a></strong>
             <nav class="actions">
+                @auth
+                    <a href="{{ route('bookings.index') }}">Bookings</a>
+                    <a href="{{ route('bookings.create') }}">New booking</a>
+                @endauth
                 <a href="{{ route('services.index') }}">Services</a>
                 <a href="{{ route('services.create') }}">New service</a>
                 <a href="{{ route('staff.index') }}">Staff</a>
                 <a href="{{ route('staff.create') }}">New staff</a>
+                @auth
+                    <form action="{{ route('logout') }}" method="post" style="display:inline;">
+                        @csrf
+                        <button type="submit" class="btn btn-ghost" style="padding: 0.35rem 0.75rem;">Log out</button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}">Log in</a>
+                @endauth
             </nav>
         </header>
         @if (session('status'))
@@ -48,5 +60,6 @@
         @endif
         @yield('content')
     </div>
+    @stack('scripts')
 </body>
 </html>
