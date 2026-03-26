@@ -3,25 +3,27 @@
 @section('title', 'New booking')
 
 @section('content')
-    <h1>New booking</h1>
+    <h1 class="page-title">Book appointment</h1>
+    <p class="page-subtitle">Pick staff, service, date and an available slot.</p>
 
-    <div class="card">
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
         <form method="post" action="{{ route('bookings.store') }}" id="booking-form">
             @csrf
-            <div class="field">
+            <div class="mb-3">
                 <label for="staff_id">Staff</label>
-                <select id="staff_id" name="staff_id" required>
+                <select id="staff_id" name="staff_id" class="form-select" required>
                     <option value="">— Select —</option>
                     @foreach ($staffMembers as $s)
                         <option value="{{ $s->id }}" @selected(old('staff_id') == $s->id)>{{ $s->full_name }}</option>
                     @endforeach
                 </select>
-                @error('staff_id')<div class="error">{{ $message }}</div>@enderror
+                @error('staff_id')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
             </div>
 
-            <div class="field">
+            <div class="mb-3">
                 <label for="service_id">Service</label>
-                <select id="service_id" name="service_id" required>
+                <select id="service_id" name="service_id" class="form-select" required>
                     <option value="">— Select —</option>
                     @foreach ($services as $svc)
                         <option value="{{ $svc->id }}" @selected(old('service_id') == $svc->id)>
@@ -29,35 +31,38 @@
                         </option>
                     @endforeach
                 </select>
-                @error('service_id')<div class="error">{{ $message }}</div>@enderror
+                @error('service_id')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
             </div>
 
-            <div class="field">
+            <div class="mb-3">
                 <label for="date">Date</label>
-                <input id="date" name="date" type="date" value="{{ old('date') }}" min="{{ now()->toDateString() }}" required>
-                @error('date')<div class="error">{{ $message }}</div>@enderror
+                <input id="date" name="date" type="date" class="form-control" value="{{ old('date') }}" min="{{ now()->toDateString() }}" required>
+                @error('date')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
             </div>
 
-            <div class="field">
+            <div class="mb-3">
                 <label for="time">Start time</label>
-                <select id="time" name="time" required disabled>
+                <select id="time" name="time" class="form-select" required disabled>
                     <option value="">— Choose staff, service, and date first —</option>
                 </select>
-                <div id="slots-hint" style="font-size: 0.8125rem; color: var(--muted); margin-top: 0.35rem;"></div>
-                @error('time')<div class="error">{{ $message }}</div>@enderror
+                <div id="slots-hint" class="form-text"></div>
+                @error('time')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
             </div>
 
-            <div class="field">
+            <div class="mb-3">
                 <label for="notes">Notes (optional)</label>
-                <textarea id="notes" name="notes">{{ old('notes') }}</textarea>
-                @error('notes')<div class="error">{{ $message }}</div>@enderror
+                <textarea id="notes" name="notes" class="form-control">{{ old('notes') }}</textarea>
+                @error('notes')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
             </div>
 
-            @error('booking')<div class="error" style="margin-bottom: 1rem;">{{ $message }}</div>@enderror
+            @error('booking')<div class="alert alert-danger py-2">{{ $message }}</div>@enderror
 
-            <button type="submit" class="btn btn-primary" id="submit-btn" disabled>Book</button>
-            <a href="{{ route('bookings.index') }}" class="btn btn-ghost">Cancel</a>
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="submit" class="btn btn-primary" id="submit-btn" disabled>Book</button>
+                <a href="{{ route('bookings.index') }}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
         </form>
+        </div>
     </div>
 
     @push('scripts')

@@ -3,6 +3,7 @@
 namespace App\Services\Payment;
 
 use App\Models\Invoice;
+use App\Notifications\BookingStatusChangedNotification;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
@@ -26,6 +27,8 @@ class MockPaymentService
         }
 
         return DB::transaction(function () use ($invoice, $booking, $result) {
+            $fromStatus = (string) $booking->status;
+
             if ($result === 'success') {
                 $invoice->update(['status' => 'paid']);
                 $booking->update(['status' => 'confirmed']);
@@ -34,7 +37,18 @@ class MockPaymentService
                 $booking->update(['status' => 'pending']);
             }
 
-            return $invoice->fresh(['booking']);
+            $updated = $invoice->fresh(['booking.user']);
+            $toStatus = (string) ($updated->booking?->status ?? $fromStatus);
+
+            if ($toStatus !== $fromStatus && $updated->booking?->user) {
+                DB::afterCommit(function () use ($updated, $fromStatus, $toStatus): void {
+                    $updated->booking?->user?->notify(
+                        new BookingStatusChangedNotification($updated->booking, $fromStatus, $toStatus)
+                    );
+                });
+            }
+
+            return $updated;
         });
     }
 }

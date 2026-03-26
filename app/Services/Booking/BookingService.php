@@ -9,6 +9,8 @@ use App\Models\Invoice;
 use App\Models\Service;
 use App\Models\Staff;
 use App\Models\User;
+use App\Notifications\BookingCreatedNotification;
+use App\Notifications\BookingStatusChangedNotification;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -146,6 +148,10 @@ class BookingService
                     $this->ensureInvoiceForBooking($booking);
                 }
 
+                DB::afterCommit(function () use ($booking): void {
+                    $booking->user?->notify(new BookingCreatedNotification($booking));
+                });
+
                 return $booking->fresh(['staff', 'service', 'user', 'invoice']);
             });
         } catch (QueryException $e) {
@@ -169,10 +175,16 @@ class BookingService
         }
 
         return DB::transaction(function () use ($booking) {
+            $fromStatus = (string) $booking->status;
             $booking->update(['status' => 'confirmed']);
             $this->ensureInvoiceForBooking($booking);
+            $updated = $booking->fresh(['invoice', 'user']);
 
-            return $booking->fresh(['invoice']);
+            DB::afterCommit(function () use ($updated, $fromStatus): void {
+                $updated->user?->notify(new BookingStatusChangedNotification($updated, $fromStatus, (string) $updated->status));
+            });
+
+            return $updated;
         });
     }
 
@@ -183,13 +195,19 @@ class BookingService
         }
 
         return DB::transaction(function () use ($booking) {
+            $fromStatus = (string) $booking->status;
             $booking->slots()->delete();
             $booking->update([
                 'status' => 'cancelled',
                 'cancelled_at' => now(),
             ]);
+            $updated = $booking->fresh(['user']);
 
-            return $booking->fresh();
+            DB::afterCommit(function () use ($updated, $fromStatus): void {
+                $updated->user?->notify(new BookingStatusChangedNotification($updated, $fromStatus, (string) $updated->status));
+            });
+
+            return $updated;
         });
     }
 

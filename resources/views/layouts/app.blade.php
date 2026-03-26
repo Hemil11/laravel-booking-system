@@ -4,74 +4,93 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', config('app.name'))</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        :root { --bg: #f8fafc; --card: #fff; --border: #e2e8f0; --text: #0f172a; --muted: #64748b; --accent: #2563eb; --danger: #dc2626; }
-        * { box-sizing: border-box; }
-        body { font-family: system-ui, -apple-system, sans-serif; margin: 0; background: var(--bg); color: var(--text); line-height: 1.5; }
-        .wrap { max-width: 960px; margin: 0 auto; padding: 1.5rem; }
-        header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
-        header a { color: var(--accent); text-decoration: none; font-weight: 500; }
-        header a:hover { text-decoration: underline; }
-        h1 { font-size: 1.5rem; font-weight: 600; margin: 0 0 1rem; }
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; }
-        .btn { display: inline-block; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; text-decoration: none; border: none; cursor: pointer; }
-        .btn-primary { background: var(--accent); color: #fff; }
-        .btn-primary:hover { filter: brightness(1.05); }
-        .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-        .btn-danger { background: var(--danger); color: #fff; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-        th, td { text-align: left; padding: 0.65rem 0.5rem; border-bottom: 1px solid var(--border); }
-        th { color: var(--muted); font-weight: 500; }
-        .flash { padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
-        label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.35rem; }
-        input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="date"], input[type="time"], select, textarea { width: 100%; max-width: 420px; padding: 0.5rem 0.65rem; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; }
-        textarea { max-width: 100%; min-height: 80px; resize: vertical; }
-        select[multiple] { max-width: 100%; min-height: 120px; }
-        .field { margin-bottom: 1rem; }
-        .error { color: var(--danger); font-size: 0.8125rem; margin-top: 0.25rem; }
-        .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+        body { background: #f5f7fb; }
+        .app-shell { min-height: calc(100vh - 56px); }
+        .app-sidebar {
+            width: 240px;
+            background: #ffffff;
+            border-right: 1px solid #e9ecef;
+        }
+        .app-sidebar .nav-link {
+            color: #334155;
+            border-radius: 0.5rem;
+            padding: 0.55rem 0.75rem;
+            font-weight: 500;
+        }
+        .app-sidebar .nav-link:hover,
+        .app-sidebar .nav-link.active {
+            background: #eef2ff;
+            color: #1d4ed8;
+        }
+        .content-wrap { width: 100%; }
+        .page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .page-subtitle { color: #64748b; margin-bottom: 1rem; }
+        @media (max-width: 991.98px) {
+            .app-sidebar { width: 100%; border-right: 0; border-bottom: 1px solid #e9ecef; }
+        }
     </style>
 </head>
 <body>
-    <div class="wrap">
-        <header>
-            <strong><a href="{{ url('/') }}">{{ config('app.name') }}</a></strong>
-            <nav class="actions">
+    <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+        <div class="container-fluid px-3 px-lg-4">
+            <a class="navbar-brand fw-semibold" href="{{ url('/') }}">{{ config('app.name') }}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#appTopNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="appTopNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                    @auth
+                        <li class="nav-item"><a class="nav-link" href="{{ route('profile.edit') }}">Profile</a></li>
+                        <li class="nav-item">
+                            <form action="{{ route('logout') }}" method="post" class="m-0">
+                                @csrf
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">Log out</button>
+                            </form>
+                        </li>
+                    @else
+                        <li class="nav-item"><a class="btn btn-primary btn-sm" href="{{ route('login') }}">Log in</a></li>
+                    @endauth
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="d-lg-flex app-shell">
+        <aside class="app-sidebar p-3">
+            <ul class="nav nav-pills flex-column gap-1">
                 @auth
                     @if (auth()->user()->hasPermission('manage_users'))
-                        <a href="{{ route('admin.dashboard') }}">Admin</a>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                     @endif
-                    <a href="{{ route('profile.edit') }}">Profile</a>
-                    <a href="{{ route('bookings.index') }}">Bookings</a>
-                    <a href="{{ route('bookings.create') }}">New booking</a>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('bookings.index') }}">Bookings</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('bookings.create') }}">Book Appointment</a></li>
                 @endauth
-                <a href="{{ route('services.index') }}">Services</a>
+                <li class="nav-item"><a class="nav-link" href="{{ route('services.index') }}">Services</a></li>
                 @auth
                     @if (auth()->user()->hasPermission('manage_services'))
-                        <a href="{{ route('services.create') }}">New service</a>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('services.create') }}">New Service</a></li>
                     @endif
                 @endauth
-                <a href="{{ route('staff.index') }}">Staff</a>
+                <li class="nav-item"><a class="nav-link" href="{{ route('staff.index') }}">Staff</a></li>
                 @auth
                     @if (auth()->user()->hasPermission('manage_staff'))
-                        <a href="{{ route('staff.create') }}">New staff</a>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('staff.create') }}">New Staff</a></li>
                     @endif
                 @endauth
-                @auth
-                    <form action="{{ route('logout') }}" method="post" style="display:inline;">
-                        @csrf
-                        <button type="submit" class="btn btn-ghost" style="padding: 0.35rem 0.75rem;">Log out</button>
-                    </form>
-                @else
-                    <a href="{{ route('login') }}">Log in</a>
-                @endauth
-            </nav>
-        </header>
-        @if (session('status'))
-            <div class="flash" role="status">{{ session('status') }}</div>
-        @endif
-        @yield('content')
+            </ul>
+        </aside>
+
+        <div class="content-wrap p-3 p-lg-4">
+            @if (session('status'))
+                <div class="alert alert-success" role="status">{{ session('status') }}</div>
+            @endif
+            @yield('content')
+        </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
 </body>
 </html>
