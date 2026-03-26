@@ -10,7 +10,7 @@ class UpdateServiceRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->hasPermission('manage_services') ?? false;
     }
 
     public function rules(): array

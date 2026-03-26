@@ -4,6 +4,8 @@ namespace App\Services\Media;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class FileUploadService
 {
@@ -19,9 +21,13 @@ class FileUploadService
      */
     public function store(UploadedFile $file, string $directory): string
     {
-        $directory = trim($directory, '/');
+        $this->assertAllowedImage($file);
 
-        return $file->store($directory, $this->disk);
+        $directory = str_replace('..', '', trim($directory, '/'));
+        $extension = $file->guessExtension() ?: $file->extension() ?: 'bin';
+        $filename = Str::uuid()->toString().'.'.$extension;
+
+        return $file->storeAs($directory, $filename, $this->disk);
     }
 
     /**
@@ -41,5 +47,18 @@ class FileUploadService
     public function disk(): string
     {
         return $this->disk;
+    }
+
+    protected function assertAllowedImage(UploadedFile $file): void
+    {
+        if (! $file->isValid()) {
+            throw ValidationException::withMessages(['file' => 'Invalid uploaded file.']);
+        }
+
+        $allowedMimeTypes = config('media.image_mime_types', []);
+        $uploadedMimeType = $file->getMimeType() ?: '';
+        if ($allowedMimeTypes !== [] && ! in_array($uploadedMimeType, $allowedMimeTypes, true)) {
+            throw ValidationException::withMessages(['file' => 'Unsupported file type.']);
+        }
     }
 }

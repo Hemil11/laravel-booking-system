@@ -9,7 +9,9 @@ class ProcessMockPaymentRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        $invoice = $this->route('invoice');
+
+        return $invoice !== null && $this->user()?->can('processPayment', $invoice) === true;
     }
 
     public function rules(): array

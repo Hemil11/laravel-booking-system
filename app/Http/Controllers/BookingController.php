@@ -11,6 +11,7 @@ use App\Services\Booking\BookingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use InvalidArgumentException;
 
@@ -51,7 +52,7 @@ class BookingController extends Controller
                 $service,
                 $request->validated('date'),
                 $request->validated('time'),
-                $request->validated('status', 'pending'),
+                'pending',
                 $request->validated('notes')
             );
         } catch (BookingConflictException $e) {
@@ -67,7 +68,7 @@ class BookingController extends Controller
 
     public function show(Booking $booking): View
     {
-        $this->ensureOwnsBooking($booking);
+        Gate::authorize('view', $booking);
         $booking->load(['staff', 'service', 'slots', 'invoice']);
 
         return view('bookings.show', compact('booking'));
@@ -98,7 +99,7 @@ class BookingController extends Controller
 
     public function cancel(Booking $booking): RedirectResponse
     {
-        $this->ensureOwnsBooking($booking);
+        Gate::authorize('cancel', $booking);
 
         if ($booking->status === 'cancelled') {
             return back()->with('status', __('Already cancelled.'));
@@ -113,7 +114,7 @@ class BookingController extends Controller
 
     public function confirm(Booking $booking): RedirectResponse
     {
-        $this->ensureOwnsBooking($booking);
+        Gate::authorize('confirm', $booking);
 
         try {
             $this->bookingService->confirmBooking($booking);
@@ -124,12 +125,5 @@ class BookingController extends Controller
         return redirect()
             ->route('bookings.show', $booking)
             ->with('status', __('Booking confirmed.'));
-    }
-
-    protected function ensureOwnsBooking(Booking $booking): void
-    {
-        if ($booking->user_id !== request()->user()?->id) {
-            abort(403);
-        }
     }
 }

@@ -31,7 +31,7 @@ class BookingController extends Controller
                 $service,
                 $request->validated('date'),
                 $request->validated('time'),
-                $request->validated('status', 'pending'),
+                'pending',
                 $request->validated('notes')
             );
         } catch (BookingConflictException $e) {

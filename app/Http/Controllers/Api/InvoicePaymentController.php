@@ -25,9 +25,7 @@ class InvoicePaymentController extends Controller
             return ApiResponse::error('Invoice is not linked to a booking.', null, 404);
         }
 
-        $user = $request->user();
-        $canManage = $user?->hasPermission('manage_bookings') ?? false;
-        if ($booking->user_id !== $user?->id && ! $canManage) {
+        if (! $request->user()?->can('processPayment', $invoice)) {
             return ApiResponse::error('Forbidden.', null, 403);
         }
 

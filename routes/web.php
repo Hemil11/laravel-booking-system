@@ -14,6 +14,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\InvoicePaymentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StaffController;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,7 @@ Route::resource('staff', StaffController::class);
 
 Route::middleware(['auth', 'permission:manage_users'])->group(function () {
     Route::get('admin', AdminDashboardController::class)->name('admin.dashboard');
+    Route::get('admin/reports', ReportController::class)->name('admin.reports');
 });
 
 Route::middleware('auth')->group(function () {

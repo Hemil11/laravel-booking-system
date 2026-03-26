@@ -16,6 +16,7 @@ class MediaValidation
             'image',
             'max:'.config('media.max_image_kilobytes'),
             'mimes:'.implode(',', config('media.image_mimes')),
+            'mimetypes:'.implode(',', config('media.image_mime_types', [])),
         ];
     }
 }

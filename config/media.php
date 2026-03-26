@@ -25,4 +25,13 @@ return [
     */
     'image_mimes' => ['jpeg', 'jpg', 'png', 'gif', 'webp'],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Allowed image MIME types (server-side content type verification)
+    |--------------------------------------------------------------------------
+    |
+    | @var list<string>
+    */
+    'image_mime_types' => ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+
 ];

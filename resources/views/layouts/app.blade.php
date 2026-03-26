@@ -63,6 +63,7 @@
                 @auth
                     @if (auth()->user()->hasPermission('manage_users'))
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.reports') }}">Reports</a></li>
                     @endif
                     <li class="nav-item"><a class="nav-link" href="{{ route('bookings.index') }}">Bookings</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('bookings.create') }}">Book Appointment</a></li>

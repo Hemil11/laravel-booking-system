@@ -33,7 +33,16 @@ class ServiceController extends Controller
 
     public function store(StoreServiceRequest $request): RedirectResponse
     {
-        Service::query()->create($request->validated());
+        $service = Service::query()->create($request->safe()->only(['name', 'duration', 'price']));
+
+        if ($request->hasFile('image')) {
+            $service->update([
+                'image_path' => $this->fileUploadService->store(
+                    $request->file('image'),
+                    'services/'.$service->id
+                ),
+            ]);
+        }
 
         return redirect()
             ->route('services.index')
