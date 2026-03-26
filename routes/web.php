@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ServiceController;
@@ -16,6 +17,10 @@ Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->
 
 Route::resource('services', ServiceController::class);
 Route::resource('staff', StaffController::class);
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('admin', AdminDashboardController::class)->name('admin.dashboard');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('bookings/available-slots', [BookingController::class, 'availableSlots'])->name('bookings.available-slots');

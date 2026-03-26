@@ -38,6 +38,9 @@
             <strong><a href="{{ url('/') }}">{{ config('app.name') }}</a></strong>
             <nav class="actions">
                 @auth
+                    @if (auth()->user()->isAdmin())
+                        <a href="{{ route('admin.dashboard') }}">Admin</a>
+                    @endif
                     <a href="{{ route('bookings.index') }}">Bookings</a>
                     <a href="{{ route('bookings.create') }}">New booking</a>
                 @endauth
