@@ -19,6 +19,8 @@ class StaffFactory extends Factory
             'full_name' => $this->faker->name(),
             'phone' => $this->faker->phoneNumber(),
             'bio' => $this->faker->paragraph(2),
+            'start_time' => '09:00:00',
+            'end_time' => '17:00:00',
             'is_active' => true,
         ];
     }

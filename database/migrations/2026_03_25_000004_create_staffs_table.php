@@ -14,6 +14,8 @@ return new class extends Migration
             $table->string('full_name', 150);
             $table->string('phone', 30)->nullable();
             $table->text('bio')->nullable();
+            $table->time('start_time')->default('09:00:00');
+            $table->time('end_time')->default('17:00:00');
             $table->boolean('is_active')->default(true);
             $table->softDeletes();
             $table->timestamps();

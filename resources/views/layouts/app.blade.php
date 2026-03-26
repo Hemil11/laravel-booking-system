@@ -24,7 +24,9 @@
         th { color: var(--muted); font-weight: 500; }
         .flash { padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
         label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.35rem; }
-        input[type="text"], input[type="number"] { width: 100%; max-width: 320px; padding: 0.5rem 0.65rem; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; }
+        input[type="text"], input[type="number"], input[type="time"], select, textarea { width: 100%; max-width: 420px; padding: 0.5rem 0.65rem; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; }
+        textarea { max-width: 100%; min-height: 80px; resize: vertical; }
+        select[multiple] { max-width: 100%; min-height: 120px; }
         .field { margin-bottom: 1rem; }
         .error { color: var(--danger); font-size: 0.8125rem; margin-top: 0.25rem; }
         .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
@@ -37,6 +39,8 @@
             <nav class="actions">
                 <a href="{{ route('services.index') }}">Services</a>
                 <a href="{{ route('services.create') }}">New service</a>
+                <a href="{{ route('staff.index') }}">Staff</a>
+                <a href="{{ route('staff.create') }}">New staff</a>
             </nav>
         </header>
         @if (session('status'))
