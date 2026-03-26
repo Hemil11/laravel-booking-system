@@ -1,59 +1,196 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel Booking System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A full-stack **appointment booking** application built with Laravel. It supports **services**, **staff**, **time-slot availability** with conflict prevention, **role-based access** (admin, staff, customer), a **web UI** for management and bookings, an **admin dashboard**, and a **token-based REST API** for mobile or SPA clients.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Project overview
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+This project models a typical service business: staff offer specific services with durations and pricing; customers book time windows that respect staff working hours, service length, and existing appointments. Core booking rules live in a dedicated **service layer** (`BookingService`), keeping controllers thin and the API predictable.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Highlights for reviewers**
 
-## Learning Laravel
+- Clear separation of **domain logic** vs. HTTP layer  
+- **REST API** with Laravel Sanctum, Form Requests, and a consistent JSON envelope  
+- **Seeded demo data** for quick local evaluation  
+- **Postman collection** included for API exploration  
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Features
 
-## Laravel Sponsors
+| Area | Capability |
+|------|------------|
+| **Bookings** | Create, view, and list bookings; statuses include `pending`, `confirmed`, `cancelled` |
+| **Availability** | Fetch available start times for a staff member, service, and date (30-minute grid aligned with business rules) |
+| **Services & staff** | CRUD for services and staff; staff–service pivot with optional price overrides |
+| **Authentication** | Session-based login for web; API register/login with personal access tokens |
+| **Roles** | Admin, staff, and customer roles (many-to-many on users) |
+| **Admin dashboard** | Aggregates total users, bookings, services, and today’s bookings (admin-only) |
+| **API** | Register, login, list services, available slots, create booking (Bearer token) |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## Tech stack
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+| Layer | Technology |
+|--------|------------|
+| Runtime | PHP **8.2+** |
+| Framework | **Laravel 12** |
+| API auth | **Laravel Sanctum** |
+| Database | MySQL / MariaDB / SQLite (via Laravel config) |
+| Frontend assets | **Vite**, **Tailwind CSS 4** (welcome / tooling) |
+| Dev tooling | Laravel Pint, PHPUnit, Sail (optional) |
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Installation
 
-## Code of Conduct
+### Prerequisites
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- PHP **8.2+** with extensions Laravel expects (`openssl`, `pdo`, `mbstring`, `tokenizer`, `xml`, `ctype`, `json`, `bcmath` as needed)  
+- [Composer](https://getcomposer.org/)  
+- Node.js **18+** and npm (for Vite assets, if you use them)  
+- A database (e.g. MySQL on XAMPP, or SQLite for quick setup)
 
-## Security Vulnerabilities
+### Steps
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. **Clone the repository** and enter the project directory.
+
+2. **Install PHP dependencies**
+
+   ```bash
+   composer install
+   ```
+
+3. **Environment**
+
+   ```bash
+   copy .env.example .env   # Windows
+   # cp .env.example .env     # macOS / Linux
+   php artisan key:generate
+   ```
+
+   Configure `.env`: `APP_URL`, `DB_*` (or `DB_CONNECTION=sqlite` and create `database/database.sqlite`).
+
+4. **Migrate (and optionally seed)**
+
+   ```bash
+   php artisan migrate
+   php artisan db:seed
+   ```
+
+   The seeder creates roles, sample services, staff, customers, and bookings. Default **admin** user (if seeded): `admin@example.com` / `password`.
+
+5. **Sanctum** — personal access tokens table is included in migrations; no extra step if migrations ran successfully.
+
+6. **Run the application**
+
+   ```bash
+   php artisan serve
+   ```
+
+   Visit `http://127.0.0.1:8000`. Log in via `/login` to use bookings and (as admin) `/admin`.
+
+7. **Optional — front-end build**
+
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+---
+
+## API endpoints
+
+Base URL: `{APP_URL}/api` (e.g. `http://127.0.0.1:8000/api`).
+
+Send `Accept: application/json` on all requests. For JSON bodies, use `Content-Type: application/json`.
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| `POST` | `/api/register` | — | Register user; returns Bearer token + user |
+| `POST` | `/api/login` | — | Login; returns Bearer token + user |
+| `GET` | `/api/services` | — | List services |
+| `GET` | `/api/available-slots` | — | Query: `staff_id`, `service_id`, `date` (`Y-m-d`) |
+| `POST` | `/api/bookings` | **Bearer token** | Create booking (`staff_id`, `service_id`, `date`, `time`, optional `status`, `notes`) |
+
+**Response shape (typical success)**
+
+```json
+{
+  "success": true,
+  "message": "OK",
+  "data": { }
+}
+```
+
+Validation errors return `success: false`, `message`, and `errors` keyed by field.
+
+**Postman:** import `postman/Booking-API.postman_collection.json` for ready-made requests, headers, and example bodies.
+
+---
+
+## Folder structure
+
+Relevant parts of the application (simplified):
+
+```
+app/
+├── Exceptions/              # e.g. BookingConflictException
+├── Http/
+│   ├── Controllers/         # Web + Api/* controllers
+│   ├── Middleware/          # e.g. EnsureUserIsAdmin
+│   ├── Requests/            # Form requests (web + Api/*)
+│   └── Responses/           # ApiResponse helper for JSON envelope
+├── Models/                  # User, Role, Service, Staff, Booking, BookingSlot, …
+├── Providers/
+└── Services/Booking/        # BookingService — availability & booking rules
+
+database/
+├── factories/
+├── migrations/
+└── seeders/
+
+resources/views/             # Blade layouts, services, staff, bookings, admin
+
+routes/
+├── api.php                  # Sanctum API
+└── web.php                  # Web + session auth
+
+postman/                     # Postman collection for the API
+```
+
+Tests and tooling live under `tests/`, `phpunit.xml`, Vite config at project root.
+
+---
+
+## Screenshots
+
+Add your own captures to show the product in portfolios or README previews. Suggested filenames (create a folder such as `docs/screenshots/`):
+
+| Screenshot | Suggested file | What to show |
+|------------|----------------|--------------|
+| Landing | `docs/screenshots/01-welcome.png` | Welcome / landing page |
+| Admin dashboard | `docs/screenshots/02-admin-dashboard.png` | Stats cards (`/admin`) |
+| Booking flow | `docs/screenshots/03-booking-create.png` | New booking form |
+| API (optional) | `docs/screenshots/04-postman.png` | Postman or HTTP client hitting `/api` |
+
+**Markdown placeholders** (uncomment paths after you add images):
+
+```markdown
+<!-- ![Welcome](docs/screenshots/01-welcome.png) -->
+<!-- ![Admin dashboard](docs/screenshots/02-admin-dashboard.png) -->
+```
+
+---
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Specify your license in a `LICENSE` file at the repository root (e.g. MIT) when you publish.
+
+---
+
+<p align="center">
+  Built with Laravel · Booking system demo / portfolio piece
+</p>
