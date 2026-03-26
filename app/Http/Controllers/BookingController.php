@@ -68,7 +68,7 @@ class BookingController extends Controller
     public function show(Booking $booking): View
     {
         $this->ensureOwnsBooking($booking);
-        $booking->load(['staff', 'service', 'slots']);
+        $booking->load(['staff', 'service', 'slots', 'invoice']);
 
         return view('bookings.show', compact('booking'));
     }

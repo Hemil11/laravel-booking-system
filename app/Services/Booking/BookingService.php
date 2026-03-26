@@ -5,6 +5,7 @@ namespace App\Services\Booking;
 use App\Exceptions\BookingConflictException;
 use App\Models\Booking;
 use App\Models\BookingSlot;
+use App\Models\Invoice;
 use App\Models\Service;
 use App\Models\Staff;
 use App\Models\User;
@@ -19,6 +20,8 @@ class BookingService
      * Internal grid step (minutes). Service duration must be a multiple of this value.
      */
     public const SLOT_STEP_MINUTES = 30;
+
+    public const DEFAULT_TAX_RATE = 0.10;
 
     /**
      * Return candidate start times (H:i:s) that fit staff hours, service duration, and existing bookings.
@@ -139,7 +142,11 @@ class BookingService
                     ]);
                 }
 
-                return $booking->fresh(['staff', 'service', 'user']);
+                if ($status === 'confirmed') {
+                    $this->ensureInvoiceForBooking($booking);
+                }
+
+                return $booking->fresh(['staff', 'service', 'user', 'invoice']);
             });
         } catch (QueryException $e) {
             if ($this->isUniqueConstraintViolation($e)) {
@@ -156,12 +163,17 @@ class BookingService
         }
 
         if ($booking->status === 'confirmed') {
-            return $booking;
+            $this->ensureInvoiceForBooking($booking);
+
+            return $booking->fresh(['invoice']);
         }
 
-        $booking->update(['status' => 'confirmed']);
+        return DB::transaction(function () use ($booking) {
+            $booking->update(['status' => 'confirmed']);
+            $this->ensureInvoiceForBooking($booking);
 
-        return $booking->fresh();
+            return $booking->fresh(['invoice']);
+        });
     }
 
     public function cancelBooking(Booking $booking): Booking
@@ -260,7 +272,7 @@ class BookingService
     {
         $time = trim($time);
         if (strlen($time) === 5) {
-            return $time . ':00';
+            return $time.':00';
         }
 
         return $time;
@@ -273,5 +285,27 @@ class BookingService
         return str_contains($msg, 'Duplicate entry')
             || str_contains($msg, 'UNIQUE constraint')
             || str_contains($msg, 'duplicate key');
+    }
+
+    protected function ensureInvoiceForBooking(Booking $booking): Invoice
+    {
+        $booking->loadMissing('service');
+
+        $amount = (float) ($booking->service?->price ?? 0);
+        $tax = round($amount * self::DEFAULT_TAX_RATE, 2);
+        $total = round($amount + $tax, 2);
+
+        /** @var Invoice $invoice */
+        $invoice = Invoice::query()->firstOrCreate(
+            ['booking_id' => $booking->id],
+            [
+                'amount' => $amount,
+                'tax' => $tax,
+                'total' => $total,
+                'status' => 'unpaid',
+            ]
+        );
+
+        return $invoice;
     }
 }

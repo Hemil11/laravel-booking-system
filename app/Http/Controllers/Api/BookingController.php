@@ -40,7 +40,7 @@ class BookingController extends Controller
             return ApiResponse::error($e->getMessage(), null, 422);
         }
 
-        $booking->load(['staff', 'service']);
+        $booking->load(['staff', 'service', 'invoice']);
 
         return ApiResponse::success(
             ['booking' => $this->bookingPayload($booking)],
@@ -59,7 +59,7 @@ class BookingController extends Controller
             'user_id' => $booking->user_id,
             'staff_id' => $booking->staff_id,
             'service_id' => $booking->service_id,
-            'date' => $booking->date->toDateString(),
+            'date' => (string) $booking->getAttribute('date'),
             'time' => $booking->time,
             'status' => $booking->status,
             'notes' => $booking->notes,
@@ -71,6 +71,13 @@ class BookingController extends Controller
                 'id' => $booking->service->id,
                 'name' => $booking->service->name,
                 'duration' => $booking->service->duration,
+            ] : null,
+            'invoice' => $booking->invoice ? [
+                'id' => $booking->invoice->id,
+                'amount' => $booking->invoice->amount,
+                'tax' => $booking->invoice->tax,
+                'total' => $booking->invoice->total,
+                'status' => $booking->invoice->status,
             ] : null,
         ];
     }
