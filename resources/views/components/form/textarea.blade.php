@@ -1,6 +1,8 @@
 @props([
     'name',
     'label' => null,
+    'labelClass' => null,
+    'hint' => null,
     'value' => null,
     'required' => false,
     'placeholder' => null,
@@ -11,16 +13,21 @@
     $hasError = $errors->has($name);
     $inputId = $attributes->get('id', $name);
     $areaValue = old($name, $value);
+    $resolvedLabelClass = $labelClass ?? 'block text-sm font-semibold text-gray-900';
 @endphp
 
 <div class="space-y-1.5">
     @if ($label)
-        <label for="{{ $inputId }}" class="block text-sm font-semibold text-text">
+        <label for="{{ $inputId }}" class="{{ $resolvedLabelClass }}">
             {{ $label }}
             @if ($required)
                 <span class="text-danger">*</span>
             @endif
         </label>
+    @endif
+
+    @if ($hint)
+        <p id="{{ $inputId }}-hint" class="text-xs text-gray-600">{{ $hint }}</p>
     @endif
 
     <textarea

@@ -9,6 +9,16 @@ class InvoicePolicy
 {
     public function processPayment(User $user, Invoice $invoice): bool
     {
+        return $this->ownsBookingOrManagesBookings($user, $invoice);
+    }
+
+    public function viewPdf(User $user, Invoice $invoice): bool
+    {
+        return $this->ownsBookingOrManagesBookings($user, $invoice);
+    }
+
+    protected function ownsBookingOrManagesBookings(User $user, Invoice $invoice): bool
+    {
         $invoice->loadMissing('booking');
         $booking = $invoice->booking;
 

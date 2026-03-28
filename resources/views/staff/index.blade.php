@@ -23,49 +23,71 @@
         </form>
     </x-card>
 
-    <x-table>
-        <x-slot:head>
-            <th class="px-4 py-3">Name</th>
-            <th class="px-4 py-3">User</th>
-            <th class="px-4 py-3">Hours</th>
-            <th class="px-4 py-3">Services</th>
-            <th class="px-4 py-3">Status</th>
-            <th class="px-4 py-3 text-right">Actions</th>
-        </x-slot:head>
-
-        @forelse ($staffMembers as $member)
-            <tr>
-                <td class="px-4 py-3 font-medium">
-                    <a href="{{ route('staff.show', $member) }}" class="text-indigo-700 hover:underline">{{ $member->full_name }}</a>
-                </td>
-                <td class="px-4 py-3">{{ $member->user?->email ?? '—' }}</td>
-                <td class="px-4 py-3">
-                    @if ($member->start_time && $member->end_time)
-                        {{ substr($member->start_time, 0, 5) }} - {{ substr($member->end_time, 0, 5) }}
-                    @else
-                        —
-                    @endif
-                </td>
-                <td class="px-4 py-3">{{ $member->services->count() }}</td>
-                <td class="px-4 py-3">
-                    <x-badge :status="$member->is_active ? 'active' : 'inactive'" />
-                </td>
-                <x-table.actions>
-                    <x-table.action variant="view" href="{{ route('staff.show', $member) }}" />
-                    <x-table.action variant="edit" href="{{ route('staff.edit', $member) }}" />
-                    <x-table.action
-                        variant="delete"
-                        :form-action="route('staff.destroy', $member)"
-                        :confirm="__('Remove this staff profile?')"
+    <x-bulk.form
+        :action="route('staff.bulk')"
+        :status-options="$bulkStatusOptions"
+        :delete-confirm="__('Remove selected staff profiles?')"
+        delete-label="{{ __('Delete selected') }}"
+    >
+        <x-table>
+            <x-slot:head>
+                <th class="w-12 px-3 py-3">
+                    <input
+                        type="checkbox"
+                        data-bulk-select-all
+                        class="checkbox"
+                        aria-label="{{ __('Select all on this page') }}"
                     />
-                </x-table.actions>
-            </tr>
-        @empty
-            <tr>
-                <td colspan="6" class="px-4 py-8 text-center text-text-subtle">No staff found.</td>
-            </tr>
-        @endforelse
-    </x-table>
+                </th>
+                <th class="px-4 py-3">Name</th>
+                <th class="px-4 py-3">User</th>
+                <th class="px-4 py-3">Hours</th>
+                <th class="px-4 py-3">Services</th>
+                <th class="px-4 py-3">Status</th>
+                <th class="px-4 py-3 text-right">Actions</th>
+            </x-slot:head>
+
+            @forelse ($staffMembers as $member)
+                <tr>
+                    <td class="px-3 py-3 align-middle">
+                        <input
+                            type="checkbox"
+                            name="ids[]"
+                            value="{{ $member->id }}"
+                            data-bulk-row
+                            class="checkbox"
+                            aria-label="{{ __('Select :name', ['name' => $member->full_name]) }}"
+                        />
+                    </td>
+                    <td class="px-4 py-3 font-medium">
+                        <a href="{{ route('staff.show', $member) }}" class="text-indigo-700 hover:underline">{{ $member->full_name }}</a>
+                    </td>
+                    <td class="px-4 py-3">{{ $member->user?->email ?? '—' }}</td>
+                    <td class="px-4 py-3">
+                        @if ($member->start_time && $member->end_time)
+                            {{ substr($member->start_time, 0, 5) }} - {{ substr($member->end_time, 0, 5) }}
+                        @else
+                            —
+                        @endif
+                    </td>
+                    <td class="px-4 py-3">{{ $member->services->count() }}</td>
+                    <td class="px-4 py-3">
+                        <x-badge :status="$member->is_active ? 'active' : 'inactive'" />
+                    </td>
+                    <x-table.crud-actions
+                        :view-href="route('staff.show', $member)"
+                        :edit-href="route('staff.edit', $member)"
+                        :delete-form-action="route('staff.destroy', $member)"
+                        :delete-confirm="__('Remove this staff profile?')"
+                    />
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="7" class="px-4 py-8 text-center text-text-subtle">No staff found.</td>
+                </tr>
+            @endforelse
+        </x-table>
+    </x-bulk.form>
 
     <x-pagination class="mt-8" :paginator="$staffMembers" />
 @endsection

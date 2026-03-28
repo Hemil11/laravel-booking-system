@@ -21,9 +21,9 @@
     @endif
 
     <header class="mb-8">
-        <h1 class="text-2xl font-bold tracking-tight text-text sm:text-3xl">{{ $title }}</h1>
+        <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{{ $title }}</h1>
         @if (filled($description))
-            <p class="mt-2 max-w-2xl text-sm leading-relaxed text-text-muted">{{ $description }}</p>
+            <p class="mt-2 max-w-2xl text-sm leading-relaxed text-gray-600">{{ $description }}</p>
         @endif
     </header>
 

@@ -40,6 +40,34 @@
                 </dl>
             </x-card>
 
+            @can('updateStatus', $booking)
+                <x-card :header="__('Update status')" class="border-indigo-100 ring-1 ring-indigo-100">
+                    <form
+                        method="post"
+                        action="{{ route('bookings.update-status', $booking) }}"
+                        class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end"
+                    >
+                        @csrf
+                        @method('PATCH')
+                        <div class="min-w-[min(100%,14rem)] flex-1 sm:max-w-md">
+                            <x-form.select
+                                name="status"
+                                label="{{ __('Booking status') }}"
+                                :options="[
+                                    'pending' => __('Pending'),
+                                    'confirmed' => __('Confirmed'),
+                                    'completed' => __('Completed'),
+                                    'cancelled' => __('Cancelled'),
+                                ]"
+                                :value="$booking->status"
+                                required
+                            />
+                        </div>
+                        <x-button type="submit">{{ __('Save status') }}</x-button>
+                    </form>
+                </x-card>
+            @endcan
+
             @if ($booking->invoice)
                 <x-card :header="__('Invoice')">
                     <dl class="grid gap-6 sm:grid-cols-3">
@@ -64,6 +92,13 @@
                             <dd class="mt-1.5 text-gray-700">${{ number_format((float) $booking->invoice->tax, 2) }}</dd>
                         </div>
                     </dl>
+                    @can('viewPdf', $booking->invoice)
+                        <div class="mt-6 border-t border-gray-200 pt-4">
+                            <x-button variant="outline" href="{{ route('invoices.pdf', $booking->invoice) }}">
+                                {{ __('Download PDF invoice') }}
+                            </x-button>
+                        </div>
+                    @endcan
                 </x-card>
             @endif
 

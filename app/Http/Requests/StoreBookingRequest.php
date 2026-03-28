@@ -23,6 +23,29 @@ class StoreBookingRequest extends FormRequest
         ];
     }
 
+    public function attributes(): array
+    {
+        return [
+            'staff_id' => __('Staff'),
+            'service_id' => __('Service'),
+            'date' => __('Date'),
+            'time' => __('Time'),
+            'notes' => __('Notes'),
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'staff_id.required' => __('Please select a staff member.'),
+            'service_id.required' => __('Please select a service.'),
+            'date.required' => __('Please choose a date.'),
+            'date.after_or_equal' => __('Choose today or a future date.'),
+            'time.required' => __('Please choose a time slot.'),
+            'time.date_format' => __('The selected time is not valid.'),
+        ];
+    }
+
     protected function passedValidation(): void
     {
         $this->merge([

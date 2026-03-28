@@ -2,6 +2,7 @@
     'name',
     'label' => null,
     'labelClass' => null,
+    'hint' => null,
     'type' => 'text',
     'value' => null,
     'required' => false,
@@ -13,7 +14,7 @@
     $hasError = $errors->has($name);
     $inputId = $attributes->get('id', $name);
     $inputValue = $type === 'password' ? '' : old($name, $value);
-    $resolvedLabelClass = $labelClass ?? 'block text-sm font-semibold text-text';
+    $resolvedLabelClass = $labelClass ?? 'block text-sm font-semibold text-gray-900';
 @endphp
 
 <div class="space-y-1.5">
@@ -24,6 +25,10 @@
                 <span class="text-danger">*</span>
             @endif
         </label>
+    @endif
+
+    @if ($hint)
+        <p id="{{ $inputId }}-hint" class="text-xs text-gray-600">{{ $hint }}</p>
     @endif
 
     <input

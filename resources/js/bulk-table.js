@@ -51,8 +51,15 @@ function initBulkRoot(root) {
         }
     });
 
+    function selectedCount() {
+        return rowChecks().filter((c) => c.checked).length;
+    }
+
     const deleteBtn = root.querySelector('[data-bulk-delete]');
     deleteBtn?.addEventListener('click', () => {
+        if (selectedCount() === 0) {
+            return;
+        }
         const msg = deleteBtn.getAttribute('data-bulk-delete-confirm') || 'Delete selected items?';
         if (!window.confirm(msg)) {
             return;
@@ -65,6 +72,9 @@ function initBulkRoot(root) {
 
     const applyBtn = root.querySelector('[data-bulk-apply-status]');
     applyBtn?.addEventListener('click', () => {
+        if (selectedCount() === 0) {
+            return;
+        }
         const statusSelect = root.querySelector('[data-bulk-status]');
         if (statusSelect && !statusSelect.value) {
             window.alert(statusSelect.getAttribute('data-bulk-status-hint') || 'Choose a status first.');

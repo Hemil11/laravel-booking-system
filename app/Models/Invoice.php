@@ -10,6 +10,10 @@ class Invoice extends Model
 {
     use HasFactory;
 
+    public const STATUS_UNPAID = 'unpaid';
+
+    public const STATUS_PAID = 'paid';
+
     protected $fillable = [
         'booking_id',
         'amount',

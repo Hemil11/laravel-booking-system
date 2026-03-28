@@ -1,6 +1,8 @@
 @props([
     'name',
     'label' => null,
+    'labelClass' => null,
+    'hint' => null,
     'value' => null,
     'options' => [],
     'emptyOption' => null,
@@ -11,16 +13,21 @@
     $inputId = $attributes->get('id', $name);
     $current = old($name, $value);
     $hasError = $errors->has($name);
+    $resolvedLabelClass = $labelClass ?? 'block text-sm font-semibold text-gray-900';
 @endphp
 
 <div class="space-y-1.5">
     @if ($label)
-        <label for="{{ $inputId }}" class="block text-sm font-semibold text-text">
+        <label for="{{ $inputId }}" class="{{ $resolvedLabelClass }}">
             {{ $label }}
             @if ($required)
                 <span class="text-danger">*</span>
             @endif
         </label>
+    @endif
+
+    @if ($hint)
+        <p id="{{ $inputId }}-hint" class="text-xs text-gray-600">{{ $hint }}</p>
     @endif
 
     <select

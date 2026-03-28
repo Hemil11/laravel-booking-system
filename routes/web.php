@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\InvoicePaymentController;
+use App\Http\Controllers\InvoicePdfController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ServiceController;
@@ -42,6 +43,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->
 
 Route::post('services/bulk', [ServiceController::class, 'bulk'])->name('services.bulk');
 Route::resource('services', ServiceController::class)->except(['show']);
+Route::post('staff/bulk', [StaffController::class, 'bulk'])->name('staff.bulk');
 Route::resource('staff', StaffController::class);
 
 Route::middleware(['auth', 'permission:manage_users'])->group(function () {
@@ -58,16 +60,22 @@ Route::middleware(['auth', 'permission:manage_users'])->group(function () {
 
 Route::middleware(['auth', 'permission:manage_bookings'])->group(function () {
     Route::get('admin/invoices', [AdminInvoiceController::class, 'index'])->name('admin.invoices.index');
+    Route::post('admin/invoices/bulk', [AdminInvoiceController::class, 'bulk'])->name('admin.invoices.bulk');
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
 
+    Route::get('bookings/calendar', [BookingController::class, 'calendar'])->name('bookings.calendar');
     Route::get('bookings/available-slots', [BookingController::class, 'availableSlots'])->name('bookings.available-slots');
     Route::post('bookings/bulk', [BookingController::class, 'bulk'])->name('bookings.bulk');
     Route::post('bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
     Route::post('bookings/{booking}/confirm', [BookingController::class, 'confirm'])->name('bookings.confirm');
+    Route::patch('bookings/{booking}/status', [BookingController::class, 'updateStatus'])->name('bookings.update-status');
+    Route::get('invoices/{invoice}/pdf', InvoicePdfController::class)
+        ->middleware('throttle:payment')
+        ->name('invoices.pdf');
     Route::post('invoices/{invoice}/mock-payment', [InvoicePaymentController::class, 'process'])->name('invoices.mock-payment');
     Route::resource('bookings', BookingController::class)->only(['index', 'create', 'store', 'show']);
 });

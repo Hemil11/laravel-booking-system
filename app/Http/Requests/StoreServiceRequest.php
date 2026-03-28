@@ -22,4 +22,22 @@ class StoreServiceRequest extends FormRequest
             'image' => MediaValidation::optionalImage(),
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'name' => __('Name'),
+            'description' => __('Description'),
+            'duration' => __('Duration'),
+            'price' => __('Price'),
+            'image' => __('Image'),
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.unique' => __('A service with this name already exists.'),
+        ];
+    }
 }

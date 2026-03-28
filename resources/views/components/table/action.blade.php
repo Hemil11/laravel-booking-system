@@ -6,6 +6,8 @@
     'httpMethod' => null,
     'confirm' => null,
     'label' => null,
+    /** default | icon — icon: compact square, text in sr-only + title */
+    'size' => 'default',
 ])
 
 @php
@@ -32,6 +34,11 @@
         'delete', 'danger' => 'btn-danger',
         default => 'btn-secondary',
     };
+
+    $isIcon = $size === 'icon';
+    if ($isIcon) {
+        $btnClass .= ' !min-h-0 !px-2.5 !py-2';
+    }
 @endphp
 
 @php
@@ -47,12 +54,23 @@
 @endphp
 
 @if ($href)
-    <a href="{{ $href }}" {{ $attributes->class($btnClass) }}>
+    <a
+        href="{{ $href }}"
+        {{ $attributes->class($btnClass) }}
+        @if ($isIcon)
+            title="{{ $text }}"
+            aria-label="{{ $text }}"
+        @endif
+    >
         @if ($slot->isNotEmpty())
             {{ $slot }}
         @else
             {!! $icon !!}
-            <span>{{ $text }}</span>
+            @if ($isIcon)
+                <span class="sr-only">{{ $text }}</span>
+            @else
+                <span>{{ $text }}</span>
+            @endif
         @endif
     </a>
 @elseif ($formAction)
@@ -64,6 +82,10 @@
         <button
             type="submit"
             {{ $attributes->class($btnClass) }}
+            @if ($isIcon)
+                title="{{ $text }}"
+                aria-label="{{ $text }}"
+            @endif
             @if ($confirmMessage)
                 onclick="return confirm(@js($confirmMessage))"
             @endif
@@ -72,17 +94,32 @@
                 {{ $slot }}
             @else
                 {!! $icon !!}
-                <span>{{ $text }}</span>
+                @if ($isIcon)
+                    <span class="sr-only">{{ $text }}</span>
+                @else
+                    <span>{{ $text }}</span>
+                @endif
             @endif
         </button>
     </form>
 @else
-    <button type="button" {{ $attributes->class($btnClass) }}>
+    <button
+        type="button"
+        {{ $attributes->class($btnClass) }}
+        @if ($isIcon)
+            title="{{ $text }}"
+            aria-label="{{ $text }}"
+        @endif
+    >
         @if ($slot->isNotEmpty())
             {{ $slot }}
         @else
             {!! $icon !!}
-            <span>{{ $text }}</span>
+            @if ($isIcon)
+                <span class="sr-only">{{ $text }}</span>
+            @else
+                <span>{{ $text }}</span>
+            @endif
         @endif
     </button>
 @endif

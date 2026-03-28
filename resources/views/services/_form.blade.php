@@ -3,7 +3,7 @@
     $service = $service ?? null;
 @endphp
 
-<div class="space-y-6">
+<div class="space-y-8">
     <x-form.input
         name="name"
         label="{{ __('Name') }}"
@@ -17,6 +17,7 @@
     <x-form.textarea
         name="description"
         label="{{ __('Description') }}"
+        :hint="__('Shown to customers when they browse services.')"
         :value="$service?->description"
         rows="5"
         maxlength="5000"
@@ -28,6 +29,7 @@
             name="duration"
             type="number"
             label="{{ __('Duration (minutes)') }}"
+            :hint="__('How long one appointment takes.')"
             :value="$service?->duration"
             min="1"
             max="10080"
@@ -38,6 +40,7 @@
             name="price"
             type="number"
             label="{{ __('Price (USD)') }}"
+            :hint="__('Use dollars; decimals allowed (e.g. 49.99).')"
             :value="$service?->price"
             min="0"
             max="99999999.99"
@@ -46,28 +49,21 @@
         />
     </div>
 
-    <div class="space-y-1.5">
-        <label for="image" class="block text-sm font-semibold text-text">{{ __('Image') }} <span class="font-normal text-text-muted">({{ __('optional') }})</span></label>
-        <input
-            id="image"
-            name="image"
-            type="file"
-            class="input py-2 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100 @error('image') input-error @enderror"
-            accept="image/jpeg,image/png,image/gif,image/webp"
-        >
-        @error('image')
-            <p class="mt-1 text-xs font-medium text-danger">{{ $message }}</p>
-        @enderror
-        @if ($service?->image_path)
-            <div class="mt-4 rounded-xl border border-border bg-background-muted/50 p-4">
-                <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-text-muted">{{ __('Current image') }}</p>
-                <img src="{{ service_image_url($service->image_path) }}" alt="" class="max-h-40 max-w-full rounded-lg border border-border object-cover shadow-sm">
-            </div>
-        @endif
-    </div>
+    <x-form.file
+        name="image"
+        label="{{ __('Image') }}"
+        accept="image/jpeg,image/png,image/gif,image/webp"
+    />
 
-    <div class="flex flex-wrap gap-3 border-t border-border pt-6">
+    @if ($service?->image_path)
+        <div class="rounded-xl border border-gray-200 bg-gray-50 p-4">
+            <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">{{ __('Current image') }}</p>
+            <img src="{{ service_image_url($service->image_path) }}" alt="" class="max-h-40 max-w-full rounded-lg border border-gray-200 object-cover shadow-sm">
+        </div>
+    @endif
+
+    <x-admin.form-actions>
         <x-button type="submit">{{ $submitLabel }}</x-button>
         <x-button variant="outline" href="{{ $cancelUrl }}">{{ __('Cancel') }}</x-button>
-    </div>
+    </x-admin.form-actions>
 </div>

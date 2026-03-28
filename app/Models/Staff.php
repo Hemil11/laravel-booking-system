@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\PerformanceCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +14,18 @@ class Staff extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
+    protected static function booted(): void
+    {
+        $flush = function (): void {
+            cache()->forget(PerformanceCache::BOOKING_FORM_STAFF);
+        };
+
+        static::saved($flush);
+        static::deleted($flush);
+        static::restored($flush);
+        static::forceDeleted($flush);
+    }
 
     // "staff" is uncountable in English; Laravel's default pluralization may resolve to `staff`.
     // Your migration uses `staffs`, so pin the table name explicitly.
@@ -58,4 +71,3 @@ class Staff extends Model
         return $this->hasMany(BookingSlot::class, 'staff_id');
     }
 }
-

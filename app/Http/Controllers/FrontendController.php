@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreContactRequest;
 use App\Models\Service;
 use App\Models\Staff;
+use App\Support\PerformanceCache;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
@@ -18,6 +20,7 @@ class FrontendController extends Controller
         $featuredServices = collect();
         if (Schema::hasTable('services')) {
             $featuredServices = Service::query()
+                ->select(['id', 'name', 'duration', 'price', 'image_path'])
                 ->orderBy('name')
                 ->limit(6)
                 ->get();
@@ -37,6 +40,7 @@ class FrontendController extends Controller
 
         if (Schema::hasTable('services')) {
             $services = Service::query()
+                ->select(['id', 'name', 'description', 'duration', 'price', 'image_path'])
                 ->orderBy('name')
                 ->paginate(9);
         }
@@ -61,16 +65,26 @@ class FrontendController extends Controller
         $services = collect();
 
         if (Schema::hasTable('staffs')) {
-            $staffMembers = Staff::query()
-                ->where('is_active', true)
-                ->orderBy('full_name')
-                ->get();
+            $staffMembers = Cache::remember(
+                PerformanceCache::BOOKING_FORM_STAFF,
+                config('performance.booking_form_ttl'),
+                static fn () => Staff::query()
+                    ->where('is_active', true)
+                    ->orderBy('full_name')
+                    ->select(['id', 'full_name'])
+                    ->get()
+            );
         }
 
         if (Schema::hasTable('services')) {
-            $services = Service::query()
-                ->orderBy('name')
-                ->get();
+            $services = Cache::remember(
+                PerformanceCache::BOOKING_FORM_SERVICES,
+                config('performance.booking_form_ttl'),
+                static fn () => Service::query()
+                    ->orderBy('name')
+                    ->select(['id', 'name', 'duration'])
+                    ->get()
+            );
         }
 
         return view('frontend.book', [

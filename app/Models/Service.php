@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\PerformanceCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -12,6 +13,19 @@ class Service extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
+    protected static function booted(): void
+    {
+        $flushLists = function (): void {
+            cache()->forget(PerformanceCache::API_SERVICES_INDEX);
+            PerformanceCache::forgetBookingDropdowns();
+        };
+
+        static::saved($flushLists);
+        static::deleted($flushLists);
+        static::restored($flushLists);
+        static::forceDeleted($flushLists);
+    }
 
     protected $fillable = [
         'name',

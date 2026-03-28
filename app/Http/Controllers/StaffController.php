@@ -10,13 +10,14 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class StaffController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth', 'permission:manage_staff'])->only(['create', 'store', 'edit', 'update', 'destroy']);
+        $this->middleware(['auth', 'permission:manage_staff'])->only(['create', 'store', 'edit', 'update', 'destroy', 'bulk']);
     }
 
     public function index(Request $request): View
@@ -38,7 +39,56 @@ class StaffController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return view('staff.index', compact('staffMembers', 'search'));
+        $bulkStatusOptions = [
+            'active' => __('Activate'),
+            'inactive' => __('Deactivate'),
+        ];
+
+        return view('staff.index', compact('staffMembers', 'search', 'bulkStatusOptions'));
+    }
+
+    public function bulk(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'bulk_action' => ['required', 'string', Rule::in(['delete', 'set_status'])],
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'exists:staffs,id'],
+            'status_value' => ['nullable', 'string', Rule::in(['active', 'inactive'])],
+        ]);
+
+        $ids = array_values(array_unique(array_map('intval', $validated['ids'])));
+        $staffRows = Staff::query()->whereIn('id', $ids)->get();
+
+        if ($staffRows->count() !== count($ids)) {
+            return back()->withErrors(['ids' => __('Invalid selection.')]);
+        }
+
+        $affected = 0;
+
+        if ($validated['bulk_action'] === 'delete') {
+            foreach ($staffRows as $staff) {
+                $staff->delete();
+                $affected++;
+            }
+
+            return back()->with('status', __('Removed :n staff profile(s).', ['n' => $affected]));
+        }
+
+        $statusValue = $validated['status_value'] ?? '';
+        if ($statusValue === '') {
+            return back()->withErrors(['status_value' => __('Choose activate or deactivate.')]);
+        }
+
+        $active = $statusValue === 'active';
+
+        foreach ($staffRows as $staff) {
+            if ($staff->is_active !== $active) {
+                $staff->update(['is_active' => $active]);
+                $affected++;
+            }
+        }
+
+        return back()->with('status', __('Updated :n staff profile(s).', ['n' => $affected]));
     }
 
     public function create(): View

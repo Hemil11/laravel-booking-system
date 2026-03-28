@@ -6,6 +6,9 @@ use App\Models\Booking;
 use App\Models\Invoice;
 use App\Models\Service;
 use App\Models\User;
+use App\Support\PerformanceCache;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 /**
@@ -16,15 +19,20 @@ class AdminDashboardController extends Controller
 {
     public function __invoke(): View
     {
-        $totalBookings = Booking::query()->count();
-        $revenuePaid = (float) Invoice::query()->where('status', 'paid')->sum('total');
-
-        $stats = [
-            'users' => User::query()->count(),
-            'bookings' => $totalBookings,
-            'services' => Service::query()->count(),
-            'revenue' => $revenuePaid,
-        ];
+        $stats = Cache::remember(
+            PerformanceCache::ADMIN_DASHBOARD_STATS,
+            config('performance.admin_dashboard_ttl'),
+            static function (): array {
+                return [
+                    'users' => Schema::hasTable('users') ? User::query()->count() : 0,
+                    'bookings' => Schema::hasTable('bookings') ? Booking::query()->count() : 0,
+                    'services' => Schema::hasTable('services') ? Service::query()->count() : 0,
+                    'revenue' => Schema::hasTable('invoices')
+                        ? (float) Invoice::query()->where('status', Invoice::STATUS_PAID)->sum('total')
+                        : 0.0,
+                ];
+            }
+        );
 
         return view('admin.dashboard', compact('stats'));
     }

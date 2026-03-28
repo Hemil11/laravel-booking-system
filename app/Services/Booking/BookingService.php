@@ -9,11 +9,14 @@ use App\Models\Invoice;
 use App\Models\Service;
 use App\Models\Staff;
 use App\Models\User;
+use App\Notifications\BookingCreatedAdminNotification;
 use App\Notifications\BookingCreatedNotification;
 use App\Notifications\BookingStatusChangedNotification;
+use App\Services\Invoice\InvoiceService;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use InvalidArgumentException;
 
 class BookingService
@@ -23,7 +26,9 @@ class BookingService
      */
     public const SLOT_STEP_MINUTES = 30;
 
-    public const DEFAULT_TAX_RATE = 0.10;
+    public function __construct(
+        protected InvoiceService $invoices
+    ) {}
 
     /**
      * Return candidate start times (H:i:s) that fit staff hours, service duration, and existing bookings.
@@ -133,23 +138,17 @@ class BookingService
                     'notes' => $notes,
                 ]);
 
-                for ($i = 0; $i < $slotCount; $i++) {
-                    $chunk = $start->copy()->addMinutes(self::SLOT_STEP_MINUTES * $i);
-                    BookingSlot::query()->create([
-                        'booking_id' => $booking->id,
-                        'staff_id' => $staff->id,
-                        'service_id' => $service->id,
-                        'date' => $day->toDateString(),
-                        'time' => $chunk->format('H:i:s'),
-                    ]);
-                }
-
-                if ($status === 'confirmed') {
-                    $this->ensureInvoiceForBooking($booking);
-                }
+                $this->persistSlots($booking, $staff->id, $service->id, $day, $start, $slotCount);
 
                 DB::afterCommit(function () use ($booking): void {
                     $booking->user?->notify(new BookingCreatedNotification($booking));
+
+                    foreach (config('booking.alert_emails', []) as $email) {
+                        if ($email !== '') {
+                            Notification::route('mail', $email)
+                                ->notify(new BookingCreatedAdminNotification($booking));
+                        }
+                    }
                 });
 
                 return $booking->fresh(['staff', 'service', 'user', 'invoice']);
@@ -209,6 +208,147 @@ class BookingService
 
             return $updated;
         });
+    }
+
+    /**
+     * Set booking status from the admin panel (requires manage_bookings at the controller/policy layer).
+     *
+     * @param  'pending'|'confirmed'|'completed'|'cancelled'  $newStatus
+     */
+    public function applyAdminStatus(Booking $booking, string $newStatus): Booking
+    {
+        $allowed = ['pending', 'confirmed', 'completed', 'cancelled'];
+        if (! in_array($newStatus, $allowed, true)) {
+            throw new InvalidArgumentException(__('Invalid booking status.'));
+        }
+
+        $booking->refresh();
+
+        if ($booking->status === $newStatus) {
+            return $booking;
+        }
+
+        if ($newStatus === 'cancelled') {
+            return $this->cancelBooking($booking);
+        }
+
+        if ($booking->status === 'cancelled') {
+            throw new InvalidArgumentException(
+                __('This booking is cancelled. Create a new booking instead of changing its status.')
+            );
+        }
+
+        if ($newStatus === 'confirmed') {
+            if ($booking->slots()->count() === 0) {
+                $this->recreateSlotsForBooking($booking);
+                $booking->refresh();
+            }
+
+            return $this->confirmBooking($booking);
+        }
+
+        if ($newStatus === 'pending') {
+            return DB::transaction(function () use ($booking) {
+                $fromStatus = (string) $booking->status;
+                if ($booking->slots()->count() === 0) {
+                    $this->recreateSlotsForBooking($booking);
+                    $booking->refresh();
+                }
+                $booking->invoice()?->delete();
+                $booking->update([
+                    'status' => 'pending',
+                    'cancelled_at' => null,
+                ]);
+                $updated = $booking->fresh(['invoice', 'user']);
+
+                DB::afterCommit(function () use ($updated, $fromStatus): void {
+                    if ($fromStatus !== 'pending') {
+                        $updated->user?->notify(new BookingStatusChangedNotification($updated, $fromStatus, 'pending'));
+                    }
+                });
+
+                return $updated;
+            });
+        }
+
+        if ($newStatus === 'completed') {
+            return DB::transaction(function () use ($booking) {
+                $fromStatus = (string) $booking->status;
+                $booking->slots()->delete();
+                $booking->update([
+                    'status' => 'completed',
+                    'cancelled_at' => null,
+                ]);
+                $updated = $booking->fresh(['user']);
+
+                DB::afterCommit(function () use ($updated, $fromStatus): void {
+                    $updated->user?->notify(new BookingStatusChangedNotification($updated, $fromStatus, 'completed'));
+                });
+
+                return $updated;
+            });
+        }
+
+        throw new InvalidArgumentException(__('Unsupported status transition.'));
+    }
+
+    /**
+     * @param  int  $slotCount  Number of :SLOT_STEP_MINUTES blocks
+     */
+    protected function persistSlots(
+        Booking $booking,
+        int $staffId,
+        int $serviceId,
+        Carbon $day,
+        Carbon $start,
+        int $slotCount,
+    ): void {
+        for ($i = 0; $i < $slotCount; $i++) {
+            $chunk = $start->copy()->addMinutes(self::SLOT_STEP_MINUTES * $i);
+            BookingSlot::query()->create([
+                'booking_id' => $booking->id,
+                'staff_id' => $staffId,
+                'service_id' => $serviceId,
+                'date' => $day->toDateString(),
+                'time' => $chunk->format('H:i:s'),
+            ]);
+        }
+    }
+
+    /**
+     * Restore calendar slots after a booking was marked completed (slots were cleared).
+     *
+     * @throws BookingConflictException
+     */
+    protected function recreateSlotsForBooking(Booking $booking): void
+    {
+        $booking->loadMissing(['staff', 'service']);
+        $staff = $booking->staff;
+        $service = $booking->service;
+        if (! $staff || ! $service) {
+            throw new InvalidArgumentException(__('Booking is missing staff or service.'));
+        }
+
+        $this->assertDurationAligned($service);
+
+        $day = Carbon::parse($booking->date)->startOfDay();
+        $start = $day->copy()->setTimeFromTimeString($this->normalizeTimeString((string) $booking->time));
+        $duration = (int) $service->duration;
+        $slotCount = intdiv($duration, self::SLOT_STEP_MINUTES);
+
+        $this->assertSlotsFree($staff->id, $day->toDateString(), $start, $slotCount);
+
+        $this->persistSlots($booking, $staff->id, $service->id, $day, $start, $slotCount);
+    }
+
+    /**
+     * Times (H:i:s) already reserved on the staff calendar for this date.
+     *
+     * @return list<string>
+     */
+    public function occupiedSlotTimesForStaff(int $staffId, string $dateYmd): array
+    {
+        return $this->occupiedSlotTimes($staffId, $dateYmd);
     }
 
     /**
@@ -307,23 +447,6 @@ class BookingService
 
     protected function ensureInvoiceForBooking(Booking $booking): Invoice
     {
-        $booking->loadMissing('service');
-
-        $amount = (float) ($booking->service?->price ?? 0);
-        $tax = round($amount * self::DEFAULT_TAX_RATE, 2);
-        $total = round($amount + $tax, 2);
-
-        /** @var Invoice $invoice */
-        $invoice = Invoice::query()->firstOrCreate(
-            ['booking_id' => $booking->id],
-            [
-                'amount' => $amount,
-                'tax' => $tax,
-                'total' => $total,
-                'status' => 'unpaid',
-            ]
-        );
-
-        return $invoice;
+        return $this->invoices->syncForBooking($booking);
     }
 }

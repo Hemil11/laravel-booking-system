@@ -11,27 +11,19 @@
         <x-button href="{{ route('admin.users.create') }}">{{ __('Add user') }}</x-button>
     </div>
 
-    <x-filter.bar title="Filter users" class="mb-6">
-        <x-form.input
-            name="search"
-            label="Search"
-            :value="$filters['search']"
-            placeholder="Name or email…"
-        />
-        <x-form.select
-            name="status"
-            label="Email verification"
-            :value="$filters['status']"
-            :options="$statusOptions"
-            empty-option="{{ __('Any') }}"
-        />
-        <x-form.input name="date_from" type="date" label="Registered from" :value="$filters['date_from']" />
-        <x-form.input name="date_to" type="date" label="Registered to" :value="$filters['date_to']" />
-        <x-slot name="actions">
-            <x-button type="submit">Apply filters</x-button>
-            <x-button variant="outline" href="{{ route('admin.users.index') }}">Reset</x-button>
-        </x-slot>
-    </x-filter.bar>
+    <x-filter.resource-bar
+        class="mb-6"
+        :title="__('Filter users')"
+        :reset-url="route('admin.users.index')"
+        :filters="$filters"
+        :status-options="$statusOptions"
+        :status-allows-any="true"
+        :status-any-label="__('Any verification')"
+        :status-label="__('Verification')"
+        :search-placeholder="__('Name or email…')"
+        :date-from-label="__('Registered from')"
+        :date-to-label="__('Registered to')"
+    />
 
     <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
         <x-bulk.form

@@ -30,10 +30,10 @@ class MockPaymentService
             $fromStatus = (string) $booking->status;
 
             if ($result === 'success') {
-                $invoice->update(['status' => 'paid']);
+                $invoice->update(['status' => Invoice::STATUS_PAID]);
                 $booking->update(['status' => 'confirmed']);
             } else {
-                $invoice->update(['status' => 'unpaid']);
+                $invoice->update(['status' => Invoice::STATUS_UNPAID]);
                 $booking->update(['status' => 'pending']);
             }
 

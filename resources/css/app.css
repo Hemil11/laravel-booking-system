@@ -15,6 +15,9 @@
  * — Spacing: .section-stack, .section-wrap, .section-divider
  * — Nav: .nav-shell, .nav-brand, .nav-link, .nav-link-active, .nav-actions
  * — Footer (guest): .footer-section-title, .footer-link
+ * — Admin: .admin-sidebar, .admin-sidebar-link, .nav-admin-shell
+ * — Data table: x-table (striped/hover), x-table.actions, x-table.action, x-table.crud-actions
+ * — Filters: x-filter.bar, x-filter.resource-bar (search + status + dates)
  */
 
 @theme {
@@ -127,10 +130,61 @@
         @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900;
     }
 
-    /* Admin top bar — matches public polish */
+    /* Admin panel — dark sidebar + top navbar */
+    .admin-sidebar {
+        @apply fixed inset-y-0 left-0 z-50 flex w-[min(100%,17.5rem)] flex-col border-r border-gray-800 bg-gray-950 transition-transform duration-200 ease-out sm:w-64;
+        @apply -translate-x-full lg:relative lg:z-0 lg:translate-x-0;
+        @apply lg:shadow-[4px_0_32px_-12px_rgba(0,0,0,0.45)];
+    }
+
+    .admin-sidebar.is-open {
+        @apply translate-x-0;
+    }
+
+    .admin-sidebar-brand {
+        @apply flex h-16 shrink-0 items-center justify-between gap-2 border-b border-gray-800 px-4 lg:h-[4.25rem] lg:px-5;
+    }
+
+    .admin-sidebar-section-label {
+        @apply mb-2 mt-1 px-3 text-[10px] font-bold uppercase tracking-[0.22em] text-gray-500;
+    }
+
+    .admin-sidebar-link {
+        @apply flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-300 transition-colors duration-150;
+        @apply hover:bg-gray-900 hover:text-white;
+        @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500;
+    }
+
+    .admin-sidebar-link-active {
+        @apply bg-indigo-600 text-white shadow-lg shadow-black/30 hover:bg-indigo-600 hover:text-white;
+    }
+
+    .admin-sidebar-icon {
+        @apply h-5 w-5 shrink-0 text-indigo-400;
+    }
+
+    .admin-sidebar-link-active .admin-sidebar-icon {
+        @apply text-indigo-100;
+    }
+
+    .admin-sidebar-footer-link {
+        @apply flex items-center gap-2 rounded-xl px-3 py-2.5 text-xs font-medium text-gray-500 transition-colors;
+        @apply hover:bg-gray-900 hover:text-gray-200;
+        @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500;
+    }
+
     .nav-admin-shell {
-        @apply sticky top-0 z-30 flex h-[4.25rem] shrink-0 items-center justify-between gap-6 border-b border-gray-200/90 bg-white/85 px-4 backdrop-blur-xl backdrop-saturate-150 sm:px-6 lg:px-8;
-        @apply shadow-[0_1px_0_0_rgba(15,23,42,0.05),0_4px_24px_-6px_rgba(15,23,42,0.08)];
+        @apply sticky top-0 z-30 flex h-[4.25rem] shrink-0 items-center justify-between gap-4 border-b border-gray-200 bg-white/95 px-4 backdrop-blur-xl backdrop-saturate-150 sm:gap-6 sm:px-6 lg:px-8;
+        @apply shadow-[0_1px_0_0_rgba(15,23,42,0.06),0_8px_32px_-8px_rgba(15,23,42,0.12)];
+    }
+
+    .admin-stat-card {
+        @apply rounded-2xl border border-gray-200/90 bg-white p-6 shadow-sm ring-1 ring-gray-900/5 transition-shadow duration-200;
+        @apply hover:shadow-md hover:ring-gray-900/10;
+    }
+
+    .admin-stat-card-icon {
+        @apply flex h-12 w-12 shrink-0 items-center justify-center rounded-xl [&_svg]:h-6 [&_svg]:w-6;
     }
 
     /* Buttons: shared padding (px-4 py-2), radius (rounded-lg), motion, focus ring */
@@ -204,7 +258,7 @@
     }
 
     .alert-success-rich {
-        @apply mb-6 flex gap-3 rounded-xl border border-green-200/90 bg-green-50 px-4 py-3 text-sm text-green-900 shadow-sm ring-1 ring-green-600/10;
+        @apply flex gap-3 rounded-xl border border-green-200/90 bg-green-50 px-4 py-3 text-sm text-green-900 shadow-sm ring-1 ring-green-600/10;
     }
 
     .alert-danger {

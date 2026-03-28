@@ -9,7 +9,7 @@
     'text-center' => $align === 'center',
 ]) }}>
     <div @class([
-        'flex flex-wrap items-center gap-1.5',
+        'flex flex-wrap items-center gap-2',
         'justify-end' => $align === 'right',
         'justify-start' => $align === 'left',
         'justify-center' => $align === 'center',

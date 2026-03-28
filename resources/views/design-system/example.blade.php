@@ -46,7 +46,7 @@
             </x-card>
         </section>
 
-        <x-card header="Table (striped, hover, actions)">
+        <x-card header="Table (striped rows, hover, CRUD actions)">
             <x-table>
                 <x-slot:head>
                     <th class="px-4 py-3">Booking</th>
@@ -59,23 +59,24 @@
                     <td class="px-4 py-3">#BKG-001</td>
                     <td class="px-4 py-3">Ava Smith</td>
                     <td class="px-4 py-3"><x-badge status="confirmed" /></td>
-                    <x-table.actions>
-                        <x-table.action variant="view" href="#" />
-                        <x-table.action variant="edit" href="#" />
-                        {{-- Delete: <x-table.action variant="delete" :form-action="route('...')" :confirm="__('...?')" /> --}}
-                    </x-table.actions>
+                    <x-table.crud-actions view-href="#" edit-href="#" />
                 </tr>
                 <tr>
                     <td class="px-4 py-3">#BKG-002</td>
                     <td class="px-4 py-3">Noah Brown</td>
                     <td class="px-4 py-3"><x-badge status="cancelled" /></td>
                     <x-table.actions>
-                        <x-table.action variant="view" href="#" />
-                        <x-table.action variant="edit" href="#" />
+                        <x-table.action variant="view" href="#" size="icon" />
+                        <x-table.action variant="edit" href="#" size="icon" />
                     </x-table.actions>
                 </tr>
             </x-table>
-            <p class="mt-3 text-small text-text-muted">Disable striping or row hover with <code class="rounded bg-background-muted px-1 py-0.5 text-xs">:striped="false"</code> or <code class="rounded bg-background-muted px-1 py-0.5 text-xs">:hover="false"</code> on <code class="rounded bg-background-muted px-1 py-0.5 text-xs">x-table</code>.</p>
+            <p class="mt-3 text-small text-text-muted">
+                Use <code class="rounded bg-background-muted px-1 py-0.5 text-xs">x-table.crud-actions</code> for view / edit / delete, or compose
+                <code class="rounded bg-background-muted px-1 py-0.5 text-xs">x-table.action</code> manually.
+                Icon-only actions: <code class="rounded bg-background-muted px-1 py-0.5 text-xs">size="icon"</code>.
+                Disable striping or row hover: <code class="rounded bg-background-muted px-1 py-0.5 text-xs">:striped="false"</code> or <code class="rounded bg-background-muted px-1 py-0.5 text-xs">:hover="false"</code> on <code class="rounded bg-background-muted px-1 py-0.5 text-xs">x-table</code>.
+            </p>
         </x-card>
     </div>
 

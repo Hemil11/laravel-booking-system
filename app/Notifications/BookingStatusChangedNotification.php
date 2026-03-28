@@ -3,12 +3,14 @@
 namespace App\Notifications;
 
 use App\Models\Booking;
+use App\Notifications\Concerns\FormatsBookingAppointment;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class BookingStatusChangedNotification extends Notification
 {
+    use FormatsBookingAppointment;
     use Queueable;
 
     public function __construct(
@@ -26,15 +28,17 @@ class BookingStatusChangedNotification extends Notification
     {
         $this->booking->loadMissing(['service', 'staff']);
 
+        $when = $this->bookingAppointmentLabel($this->booking);
+
         return (new MailMessage)
-            ->subject('Booking Status Updated #'.$this->booking->id)
-            ->greeting('Hello '.$notifiable->name.',')
-            ->line('Your booking status has changed.')
-            ->line('Booking ID: '.$this->booking->id)
-            ->line('Service: '.($this->booking->service?->name ?? '-'))
-            ->line('Staff: '.($this->booking->staff?->full_name ?? '-'))
-            ->line('From: '.ucfirst($this->fromStatus))
-            ->line('To: '.ucfirst($this->toStatus))
-            ->action('View Booking', route('bookings.show', $this->booking));
+            ->subject(__('[:app] Booking #:id status update', ['app' => config('app.name'), 'id' => $this->booking->id]))
+            ->greeting(__('Hello :name,', ['name' => $notifiable->name]))
+            ->line(__('Your booking status has been updated.'))
+            ->line(__('Service: :name', ['name' => $this->booking->service?->name ?? '—']))
+            ->line(__('Staff: :name', ['name' => $this->booking->staff?->full_name ?? '—']))
+            ->line(__('Appointment: :when', ['when' => $when]))
+            ->line(__('Previous status: :status', ['status' => __(ucfirst($this->fromStatus))]))
+            ->line(__('New status: :status', ['status' => __(ucfirst($this->toStatus))]))
+            ->action(__('View booking'), route('bookings.show', $this->booking));
     }
 }

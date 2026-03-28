@@ -6,10 +6,13 @@ use App\Models\Booking;
 use App\Models\Invoice;
 use App\Policies\BookingPolicy;
 use App\Policies\InvoicePolicy;
+use App\Services\Invoice\InvoiceService;
 use App\Services\Media\FileUploadService;
+use App\Support\PerformanceCache;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
@@ -36,6 +39,20 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::policy(Booking::class, BookingPolicy::class);
         Gate::policy(Invoice::class, InvoicePolicy::class);
+
+        Booking::created(function (Booking $booking): void {
+            app(InvoiceService::class)->syncForBooking($booking);
+        });
+
+        $forgetAdminStatsCaches = static function (): void {
+            Cache::forget(PerformanceCache::ADMIN_DASHBOARD_STATS);
+            Cache::forget(PerformanceCache::REPORTS_PAGE);
+        };
+
+        Booking::saved($forgetAdminStatsCaches);
+        Booking::deleted($forgetAdminStatsCaches);
+        Invoice::saved($forgetAdminStatsCaches);
+        Invoice::deleted($forgetAdminStatsCaches);
 
         RateLimiter::for('auth', function (Request $request): array {
             return [

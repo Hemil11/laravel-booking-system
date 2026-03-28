@@ -31,4 +31,22 @@ class UpdateAdminUserRequest extends FormRequest
             'role_ids.*' => ['integer', 'exists:roles,id'],
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'name' => __('Full name'),
+            'email' => __('Email'),
+            'password' => __('Password'),
+            'role_ids' => __('Roles'),
+            'role_ids.*' => __('Role'),
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'email.unique' => __('This email address is already in use.'),
+        ];
+    }
 }

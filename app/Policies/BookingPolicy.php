@@ -21,4 +21,9 @@ class BookingPolicy
     {
         return $booking->user_id === $user->id || $user->hasPermission('manage_bookings');
     }
+
+    public function updateStatus(User $user, Booking $booking): bool
+    {
+        return $user->hasPermission('manage_bookings');
+    }
 }

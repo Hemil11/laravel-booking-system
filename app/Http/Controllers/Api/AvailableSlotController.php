@@ -21,8 +21,13 @@ class AvailableSlotController extends Controller
     {
         $data = $request->validated();
 
-        $staff = Staff::query()->findOrFail($data['staff_id']);
-        $service = Service::query()->findOrFail($data['service_id']);
+        $staff = Staff::query()
+            ->select(['id', 'start_time', 'end_time', 'is_active'])
+            ->findOrFail($data['staff_id']);
+
+        $service = Service::query()
+            ->select(['id', 'duration'])
+            ->findOrFail($data['service_id']);
 
         try {
             $slots = $this->bookingService->getAvailableSlots($staff, $service, $data['date']);

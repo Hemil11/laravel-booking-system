@@ -11,26 +11,17 @@
         <x-button href="{{ route('services.create') }}">Add service</x-button>
     </div>
 
-    <x-filter.bar title="Filter services">
-        <x-form.input
-            name="search"
-            label="Search"
-            :value="$filters['search']"
-            placeholder="Name or description…"
-        />
-        <x-form.select
-            name="status"
-            label="Status"
-            :value="$filters['status']"
-            :options="$statusOptions"
-        />
-        <x-form.input name="date_from" type="date" label="Created from" :value="$filters['date_from']" />
-        <x-form.input name="date_to" type="date" label="Created to" :value="$filters['date_to']" />
-        <x-slot name="actions">
-            <x-button type="submit">Apply filters</x-button>
-            <x-button variant="outline" href="{{ route('services.index') }}">Reset</x-button>
-        </x-slot>
-    </x-filter.bar>
+    <x-filter.resource-bar
+        class="mb-6"
+        :title="__('Filter services')"
+        :reset-url="route('services.index')"
+        :filters="$filters"
+        :status-options="$statusOptions"
+        :status-label="__('Catalog')"
+        :search-placeholder="__('Name or description…')"
+        :date-from-label="__('Created from')"
+        :date-to-label="__('Created to')"
+    />
 
     <x-bulk.form
         :action="route('services.bulk')"
@@ -83,19 +74,18 @@
                             <x-badge status="active">{{ __('Active') }}</x-badge>
                         @endif
                     </td>
-                    <x-table.actions>
-                        @unless ($service->trashed())
-                            <x-table.action variant="view" href="{{ route('frontend.services.show', ['id' => $service->id]) }}" />
-                            <x-table.action variant="edit" href="{{ route('services.edit', $service) }}" />
-                            <x-table.action
-                                variant="delete"
-                                :form-action="route('services.destroy', $service)"
-                                :confirm="__('Delete this service?')"
-                            />
-                        @else
+                    @unless ($service->trashed())
+                        <x-table.crud-actions
+                            :view-href="route('frontend.services.show', ['id' => $service->id])"
+                            :edit-href="route('services.edit', $service)"
+                            :delete-form-action="route('services.destroy', $service)"
+                            :delete-confirm="__('Delete this service?')"
+                        />
+                    @else
+                        <x-table.actions>
                             <span class="text-xs text-text-muted">{{ __('No actions') }}</span>
-                        @endunless
-                    </x-table.actions>
+                        </x-table.actions>
+                    @endunless
                 </tr>
             @empty
                 <tr>

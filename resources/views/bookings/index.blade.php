@@ -8,30 +8,24 @@
             <h1 class="text-h1 text-text">Bookings</h1>
             <p class="mt-2 text-small text-text-muted">Track upcoming, pending, and completed appointments.</p>
         </div>
-        <x-button href="{{ route('bookings.create') }}">New booking</x-button>
+        <div class="flex flex-wrap gap-2">
+            <x-button variant="outline" href="{{ route('bookings.calendar') }}">{{ __('Calendar') }}</x-button>
+            <x-button href="{{ route('bookings.create') }}">New booking</x-button>
+        </div>
     </div>
 
-    <x-filter.bar title="Filter bookings">
-        <x-form.input
-            name="search"
-            label="Search"
-            :value="$filters['search']"
-            placeholder="Customer name, email, staff, service, or status…"
-        />
-        <x-form.select
-            name="status"
-            label="Status"
-            :value="$filters['status']"
-            :options="$statusOptions"
-            empty-option="{{ __('All statuses') }}"
-        />
-        <x-form.input name="date_from" type="date" label="Appointment from" :value="$filters['date_from']" />
-        <x-form.input name="date_to" type="date" label="Appointment to" :value="$filters['date_to']" />
-        <x-slot name="actions">
-            <x-button type="submit">Apply filters</x-button>
-            <x-button variant="outline" href="{{ route('bookings.index') }}">Reset</x-button>
-        </x-slot>
-    </x-filter.bar>
+    <x-filter.resource-bar
+        class="mb-6"
+        :title="__('Filter bookings')"
+        :reset-url="route('bookings.index')"
+        :filters="$filters"
+        :status-options="$statusOptions"
+        :status-allows-any="true"
+        :status-any-label="__('All statuses')"
+        :search-placeholder="__('Customer, staff, service, booking ID, or status…')"
+        :date-from-label="__('Appointment from')"
+        :date-to-label="__('Appointment to')"
+    />
 
     <x-bulk.form
         :action="route('bookings.bulk')"

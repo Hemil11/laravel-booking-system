@@ -5,18 +5,22 @@
     $selectedRoleIds = old('role_ids', $user ? $user->roles->pluck('id')->all() : []);
 @endphp
 
-<div class="space-y-6">
+<div class="space-y-8">
     <x-form.input name="name" label="{{ __('Full name') }}" :value="$user?->name" required autocomplete="name" />
 
     <x-form.input name="email" type="email" label="{{ __('Email') }}" :value="$user?->email" required autocomplete="email" />
 
     @if ($isEdit)
-        <x-form.input name="password" type="password" label="{{ __('New password') }}" autocomplete="new-password" />
-        <x-form.input name="password_confirmation" type="password" label="{{ __('Confirm new password') }}" autocomplete="new-password" />
-        <p class="-mt-2 text-xs text-gray-500">{{ __('Leave password fields empty to keep the current password.') }}</p>
+        <div class="space-y-6">
+            <x-form.input name="password" type="password" label="{{ __('New password') }}" autocomplete="new-password" />
+            <x-form.input name="password_confirmation" type="password" label="{{ __('Confirm new password') }}" autocomplete="new-password" />
+            <p class="-mt-2 text-xs text-gray-600">{{ __('Leave password fields empty to keep the current password.') }}</p>
+        </div>
     @else
-        <x-form.input name="password" type="password" label="{{ __('Password') }}" required autocomplete="new-password" />
-        <x-form.input name="password_confirmation" type="password" label="{{ __('Confirm password') }}" required autocomplete="new-password" />
+        <div class="space-y-6">
+            <x-form.input name="password" type="password" label="{{ __('Password') }}" required autocomplete="new-password" />
+            <x-form.input name="password_confirmation" type="password" label="{{ __('Confirm password') }}" required autocomplete="new-password" />
+        </div>
     @endif
 
     <div class="rounded-xl border border-gray-200 bg-gray-50/80 p-4">
@@ -36,12 +40,12 @@
     </div>
 
     @if ($canEditRoles)
-        <fieldset class="space-y-3 rounded-xl border border-gray-200 p-4">
-            <legend class="text-sm font-semibold text-gray-900">{{ __('Roles') }}</legend>
+        <fieldset class="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
+            <legend class="px-0.5 text-sm font-semibold text-gray-900">{{ __('Roles') }}</legend>
             <p class="text-xs text-gray-600">{{ __('Permissions are inherited from assigned roles.') }}</p>
             <div class="space-y-2.5 pt-1">
                 @foreach ($roles as $role)
-                    <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-transparent px-2 py-1.5 hover:bg-white">
+                    <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-transparent px-2 py-1.5 transition hover:bg-gray-50">
                         <input
                             type="checkbox"
                             name="role_ids[]"
@@ -53,12 +57,11 @@
                     </label>
                 @endforeach
             </div>
-            @error('role_ids')
-                <p class="text-xs font-medium text-danger">{{ $message }}</p>
-            @enderror
-            @error('role_ids.*')
-                <p class="text-xs font-medium text-danger">{{ $message }}</p>
-            @enderror
+            @if ($errors->has('role_ids') || $errors->has('role_ids.*'))
+                <p class="text-xs font-medium text-danger" role="alert">
+                    {{ $errors->first('role_ids') ?: $errors->first('role_ids.*') }}
+                </p>
+            @endif
         </fieldset>
     @else
         <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
@@ -66,8 +69,8 @@
         </div>
     @endif
 
-    <div class="flex flex-wrap gap-3 border-t border-border pt-6">
+    <x-admin.form-actions>
         <x-button type="submit">{{ $submitLabel }}</x-button>
         <x-button variant="outline" href="{{ $cancelUrl }}">{{ __('Cancel') }}</x-button>
-    </div>
+    </x-admin.form-actions>
 </div>

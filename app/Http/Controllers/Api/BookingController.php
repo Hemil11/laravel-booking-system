@@ -21,8 +21,12 @@ class BookingController extends Controller
 
     public function store(StoreBookingRequest $request): JsonResponse
     {
-        $staff = Staff::query()->findOrFail($request->validated('staff_id'));
-        $service = Service::query()->findOrFail($request->validated('service_id'));
+        $staff = Staff::query()
+            ->select(['id', 'start_time', 'end_time', 'is_active'])
+            ->findOrFail($request->validated('staff_id'));
+        $service = Service::query()
+            ->select(['id', 'duration'])
+            ->findOrFail($request->validated('service_id'));
 
         try {
             $booking = $this->bookingService->createBooking(

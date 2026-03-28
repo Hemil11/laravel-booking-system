@@ -38,7 +38,7 @@ class BookingFactory extends Factory
     {
         return $this->afterCreating(function (Booking $booking): void {
             // Cancelled bookings should not occupy slots.
-            if ($booking->status === 'cancelled') {
+            if (in_array($booking->status, ['cancelled', 'completed'], true)) {
                 return;
             }
 
@@ -65,4 +65,3 @@ class BookingFactory extends Factory
         });
     }
 }
-
