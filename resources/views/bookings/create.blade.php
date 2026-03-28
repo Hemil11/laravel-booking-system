@@ -52,11 +52,11 @@
                             id="slot-grid"
                             class="grid grid-cols-2 gap-2 sm:grid-cols-3"
                         >
-                            <p class="col-span-full rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+                            <p class="col-span-full rounded-xl border border-dashed border-gray-200 bg-gray-50 px-4 py-6 text-center text-sm text-gray-500">
                                 {{ __('Choose staff, service, and date to load available times.') }}
                             </p>
                         </div>
-                        <p id="slots-hint" class="text-xs text-slate-500"></p>
+                        <p id="slots-hint" class="text-xs text-gray-500"></p>
                         @error('time')
                             <p class="text-xs font-medium text-danger">{{ $message }}</p>
                         @enderror
@@ -103,7 +103,7 @@
                     slotGrid.innerHTML = '';
                     const el = document.createElement('p');
                     el.className =
-                        'col-span-full rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500';
+                        'col-span-full rounded-xl border border-dashed border-gray-200 bg-gray-50 px-4 py-6 text-center text-sm text-gray-500';
                     el.textContent = message;
                     slotGrid.appendChild(el);
                 }
@@ -115,11 +115,9 @@
                 function selectSlot(value, button) {
                     time.value = value;
                     slotGrid.querySelectorAll('button[data-slot]').forEach(function (el) {
-                        el.className =
-                            'inline-flex items-center justify-center rounded-xl border-2 border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-brand-400 hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2';
+                        el.className = 'btn-secondary w-full';
                     });
-                    button.className =
-                        'inline-flex items-center justify-center rounded-xl border border-brand-700/20 bg-gradient-to-r from-brand-600 to-brand-700 px-3 py-2.5 text-sm font-semibold text-white shadow-md shadow-brand-600/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2';
+                    button.className = 'btn-primary w-full';
                     updateSubmitState();
                 }
 
@@ -158,8 +156,7 @@
                             const btn = document.createElement('button');
                             btn.type = 'button';
                             btn.dataset.slot = value;
-                            btn.className =
-                                'inline-flex items-center justify-center rounded-xl border-2 border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-brand-400 hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2';
+                            btn.className = 'btn-secondary w-full';
                             btn.textContent = s.label;
                             btn.addEventListener('click', function () {
                                 selectSlot(value, btn);

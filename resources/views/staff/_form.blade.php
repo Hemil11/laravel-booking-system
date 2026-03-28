@@ -72,7 +72,7 @@
     <div class="space-y-1.5">
         <input type="hidden" name="is_active" value="0">
         <label class="inline-flex cursor-pointer items-center gap-2 text-sm text-text">
-            <input type="checkbox" name="is_active" value="1" @checked(old('is_active', $staff?->is_active ?? true)) class="h-4 w-4 rounded border-border text-brand-600 focus:ring-brand-300">
+            <input type="checkbox" name="is_active" value="1" @checked(old('is_active', $staff?->is_active ?? true)) class="checkbox border-border">
             Active
         </label>
         @error('is_active')<div class="mt-1 text-xs font-medium text-danger">{{ $message }}</div>@enderror

@@ -9,19 +9,19 @@
     </div>
 
     <div class="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <article class="rounded-2xl border border-border bg-background-elevated p-6 shadow-soft">
+        <article class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm ring-1 ring-black/5">
             <p class="text-small text-text-muted">Revenue today</p>
             <p class="mt-2 text-h2 text-text">${{ number_format($revenue['today'], 2) }}</p>
         </article>
-        <article class="rounded-2xl border border-border bg-background-elevated p-6 shadow-soft">
+        <article class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm ring-1 ring-black/5">
             <p class="text-small text-text-muted">Revenue this week</p>
             <p class="mt-2 text-h2 text-text">${{ number_format($revenue['this_week'], 2) }}</p>
         </article>
-        <article class="rounded-2xl border border-border bg-background-elevated p-6 shadow-soft">
+        <article class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm ring-1 ring-black/5">
             <p class="text-small text-text-muted">Revenue this month</p>
             <p class="mt-2 text-h2 text-text">${{ number_format($revenue['this_month'], 2) }}</p>
         </article>
-        <article class="rounded-2xl border border-border bg-background-elevated p-6 shadow-soft">
+        <article class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm ring-1 ring-black/5">
             <p class="text-small text-text-muted">Revenue all time</p>
             <p class="mt-2 text-h2 text-text">${{ number_format($revenue['all_time'], 2) }}</p>
         </article>

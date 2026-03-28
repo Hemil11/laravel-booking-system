@@ -36,7 +36,7 @@
         @forelse ($staffMembers as $member)
             <tr>
                 <td class="px-4 py-3 font-medium">
-                    <a href="{{ route('staff.show', $member) }}" class="text-brand-700 hover:underline">{{ $member->full_name }}</a>
+                    <a href="{{ route('staff.show', $member) }}" class="text-indigo-700 hover:underline">{{ $member->full_name }}</a>
                 </td>
                 <td class="px-4 py-3">{{ $member->user?->email ?? '—' }}</td>
                 <td class="px-4 py-3">

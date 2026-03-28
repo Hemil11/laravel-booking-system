@@ -25,7 +25,7 @@
 
         @if (! $user->is(auth()->user()))
             <x-card class="mt-6 border-red-100" :header="__('Danger zone')">
-                <p class="mb-4 text-sm text-slate-600">
+                <p class="mb-4 text-sm text-gray-600">
                     {{ __('Deleting this user cannot be undone. Related records may prevent deletion.') }}
                 </p>
                 <form method="post" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm(@js(__('Permanently delete this user?')));">

@@ -7,9 +7,6 @@
     $variantClasses = match ($variant) {
         'secondary', 'outline' => 'btn-secondary',
         'danger' => 'btn-danger',
-        'success' => 'btn-success',
-        'inverse' => 'btn-inverse',
-        'outline-inverse' => 'btn-outline-inverse',
         default => 'btn-primary',
     };
 @endphp

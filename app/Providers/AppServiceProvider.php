@@ -32,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::defaultView('vendor.pagination.tailwind');
+        Paginator::defaultSimpleView('vendor.pagination.simple-tailwind');
 
         Gate::policy(Booking::class, BookingPolicy::class);
         Gate::policy(Invoice::class, InvoicePolicy::class);

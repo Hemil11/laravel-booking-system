@@ -44,7 +44,7 @@
                     <input
                         type="checkbox"
                         data-bulk-select-all
-                        class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                        class="checkbox"
                         aria-label="{{ __('Select all on this page') }}"
                     />
                 </th>
@@ -63,13 +63,13 @@
                             name="ids[]"
                             value="{{ $service->id }}"
                             data-bulk-row
-                            class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                            class="checkbox"
                             aria-label="{{ __('Select :name', ['name' => $service->name]) }}"
                         />
                     </td>
                     <td class="px-4 py-3 font-medium">
                         @unless ($service->trashed())
-                            <a href="{{ route('frontend.services.show', $service) }}" class="text-brand-700 hover:underline">{{ $service->name }}</a>
+                            <a href="{{ route('frontend.services.show', ['id' => $service->id]) }}" class="text-indigo-700 hover:underline">{{ $service->name }}</a>
                         @else
                             <span class="text-text-muted">{{ $service->name }}</span>
                         @endunless
@@ -85,7 +85,7 @@
                     </td>
                     <x-table.actions>
                         @unless ($service->trashed())
-                            <x-table.action variant="view" href="{{ route('frontend.services.show', $service) }}" />
+                            <x-table.action variant="view" href="{{ route('frontend.services.show', ['id' => $service->id]) }}" />
                             <x-table.action variant="edit" href="{{ route('services.edit', $service) }}" />
                             <x-table.action
                                 variant="delete"

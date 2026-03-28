@@ -32,9 +32,9 @@
             aria-label="{{ __('Bulk actions') }}"
         >
             <div
-                class="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-lg ring-1 ring-slate-900/5 sm:flex-row sm:items-center sm:justify-between"
+                class="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-soft ring-1 ring-gray-900/5 sm:flex-row sm:items-center sm:justify-between"
             >
-                <p class="text-sm font-semibold text-slate-900">
+                <p class="text-sm font-semibold text-gray-900">
                     <span data-bulk-count>0</span>
                     {{ __('selected') }}
                 </p>
@@ -57,7 +57,7 @@
                             <button
                                 type="button"
                                 data-bulk-apply-status
-                                class="btn-secondary whitespace-nowrap py-2 text-xs"
+                                class="btn-secondary whitespace-nowrap"
                             >
                                 {{ $applyLabel }}
                             </button>
@@ -67,7 +67,7 @@
                         type="button"
                         data-bulk-delete
                         data-bulk-delete-confirm="{{ $deleteConfirm }}"
-                        class="btn-danger whitespace-nowrap py-2 text-xs"
+                        class="btn-danger whitespace-nowrap"
                     >
                         {{ $deleteLabel }}
                     </button>

@@ -52,7 +52,7 @@
             id="image"
             name="image"
             type="file"
-            class="input py-2 file:mr-4 file:rounded-lg file:border-0 file:bg-brand-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-brand-700 hover:file:bg-brand-100 @error('image') input-error @enderror"
+            class="input py-2 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100 @error('image') input-error @enderror"
             accept="image/jpeg,image/png,image/gif,image/webp"
         >
         @error('image')

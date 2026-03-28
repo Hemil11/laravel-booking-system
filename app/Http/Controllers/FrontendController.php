@@ -46,8 +46,10 @@ class FrontendController extends Controller
         ]);
     }
 
-    public function serviceShow(Service $service): View
+    public function serviceShow(int|string $id): View
     {
+        $service = Service::query()->findOrFail((int) $id);
+
         return view('frontend.service-detail', [
             'service' => $service,
         ]);

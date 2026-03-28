@@ -23,8 +23,8 @@ use App\Http\Controllers\StaffController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [FrontendController::class, 'home'])->name('frontend.home');
-Route::get('/services/{service}', [FrontendController::class, 'serviceShow'])
-    ->whereNumber('service')
+Route::get('/services/{id}', [FrontendController::class, 'serviceShow'])
+    ->whereNumber('id')
     ->name('frontend.services.show');
 Route::get('/services-listing', [FrontendController::class, 'services'])->name('frontend.services');
 Route::get('/book-appointment', [FrontendController::class, 'book'])->name('frontend.book');

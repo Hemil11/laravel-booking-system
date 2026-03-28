@@ -5,19 +5,19 @@
 @section('content')
     <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Dashboard</h1>
-            <p class="mt-2 max-w-xl text-sm text-slate-600">Overview of users, services, bookings, and paid revenue.</p>
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Dashboard</h1>
+            <p class="mt-2 max-w-xl text-sm text-gray-600">Overview of users, services, bookings, and paid revenue.</p>
         </div>
         <a href="{{ route('bookings.create') }}" class="btn-primary shrink-0 self-start sm:self-auto">Create booking</a>
     </div>
 
     <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {{-- Users --}}
-        <article class="flex flex-col rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm ring-1 ring-slate-900/5">
+        <article class="flex flex-col rounded-2xl border border-gray-200/90 bg-white p-6 shadow-sm ring-1 ring-gray-900/5">
             <div class="flex items-start justify-between gap-3">
                 <div>
-                    <p class="text-sm font-medium text-slate-500">Total users</p>
-                    <p class="mt-3 text-3xl font-bold tabular-nums tracking-tight text-slate-900">{{ number_format($stats['users']) }}</p>
+                    <p class="text-sm font-medium text-gray-500">Total users</p>
+                    <p class="mt-3 text-3xl font-bold tabular-nums tracking-tight text-gray-900">{{ number_format($stats['users']) }}</p>
                 </div>
                 <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -25,15 +25,15 @@
                     </svg>
                 </span>
             </div>
-            <p class="mt-4 text-xs text-slate-500">Registered accounts in the system</p>
+            <p class="mt-4 text-xs text-gray-500">Registered accounts in the system</p>
         </article>
 
         {{-- Bookings --}}
-        <article class="flex flex-col rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm ring-1 ring-slate-900/5">
+        <article class="flex flex-col rounded-2xl border border-gray-200/90 bg-white p-6 shadow-sm ring-1 ring-gray-900/5">
             <div class="flex items-start justify-between gap-3">
                 <div>
-                    <p class="text-sm font-medium text-slate-500">Total bookings</p>
-                    <p class="mt-3 text-3xl font-bold tabular-nums tracking-tight text-slate-900">{{ number_format($stats['bookings']) }}</p>
+                    <p class="text-sm font-medium text-gray-500">Total bookings</p>
+                    <p class="mt-3 text-3xl font-bold tabular-nums tracking-tight text-gray-900">{{ number_format($stats['bookings']) }}</p>
                 </div>
                 <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-600">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -41,15 +41,15 @@
                     </svg>
                 </span>
             </div>
-            <p class="mt-4 text-xs text-slate-500">All-time appointment records</p>
+            <p class="mt-4 text-xs text-gray-500">All-time appointment records</p>
         </article>
 
         {{-- Services --}}
-        <article class="flex flex-col rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm ring-1 ring-slate-900/5">
+        <article class="flex flex-col rounded-2xl border border-gray-200/90 bg-white p-6 shadow-sm ring-1 ring-gray-900/5">
             <div class="flex items-start justify-between gap-3">
                 <div>
-                    <p class="text-sm font-medium text-slate-500">Total services</p>
-                    <p class="mt-3 text-3xl font-bold tabular-nums tracking-tight text-slate-900">{{ number_format($stats['services']) }}</p>
+                    <p class="text-sm font-medium text-gray-500">Total services</p>
+                    <p class="mt-3 text-3xl font-bold tabular-nums tracking-tight text-gray-900">{{ number_format($stats['services']) }}</p>
                 </div>
                 <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -57,23 +57,23 @@
                     </svg>
                 </span>
             </div>
-            <p class="mt-4 text-xs text-slate-500">Bookable offerings in the catalog</p>
+            <p class="mt-4 text-xs text-gray-500">Bookable offerings in the catalog</p>
         </article>
 
         {{-- Revenue --}}
-        <article class="flex flex-col rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm ring-1 ring-slate-900/5">
+        <article class="flex flex-col rounded-2xl border border-gray-200/90 bg-white p-6 shadow-sm ring-1 ring-gray-900/5">
             <div class="flex items-start justify-between gap-3">
                 <div>
-                    <p class="text-sm font-medium text-slate-500">Revenue (paid)</p>
-                    <p class="mt-3 text-3xl font-bold tabular-nums tracking-tight text-slate-900">${{ number_format($stats['revenue'], 2) }}</p>
+                    <p class="text-sm font-medium text-gray-500">Revenue (paid)</p>
+                    <p class="mt-3 text-3xl font-bold tabular-nums tracking-tight text-gray-900">${{ number_format($stats['revenue'], 2) }}</p>
                 </div>
-                <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-green-50 text-green-600">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </span>
             </div>
-            <p class="mt-4 text-xs text-slate-500">Sum of invoice totals marked paid</p>
+            <p class="mt-4 text-xs text-gray-500">Sum of invoice totals marked paid</p>
         </article>
     </div>
 
@@ -82,13 +82,13 @@
         $chartLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     @endphp
 
-    <div class="mt-10 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm ring-1 ring-slate-900/5 sm:p-8">
+    <div class="mt-10 rounded-2xl border border-gray-200/90 bg-white p-6 shadow-sm ring-1 ring-gray-900/5 sm:p-8">
         <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h2 class="text-lg font-semibold text-slate-900">Activity overview</h2>
-                <p class="text-sm text-slate-500">Chart placeholder — connect to analytics or booking trends when ready.</p>
+                <h2 class="text-lg font-semibold text-gray-900">Activity overview</h2>
+                <p class="text-sm text-gray-500">Chart placeholder — connect to analytics or booking trends when ready.</p>
             </div>
-            <span class="mt-2 inline-flex w-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 sm:mt-0">Sample data</span>
+            <span class="mt-2 inline-flex w-fit rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600 sm:mt-0">Sample data</span>
         </div>
 
         <div class="mt-8">
@@ -102,7 +102,7 @@
                     </div>
                 @endforeach
             </div>
-            <div class="mt-3 flex justify-between gap-2 text-xs font-medium text-slate-500">
+            <div class="mt-3 flex justify-between gap-2 text-xs font-medium text-gray-500">
                 @foreach ($chartLabels as $label)
                     <span class="min-w-0 flex-1 truncate text-center">{{ $label }}</span>
                 @endforeach

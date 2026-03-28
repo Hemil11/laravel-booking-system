@@ -11,18 +11,14 @@
             <p class="text-body text-text-muted">Clean, modern typography improves scannability for bookings, revenue, and service insights.</p>
         </x-card>
 
-        <x-card header="Buttons">
+        <x-card header="Buttons (btn-primary, btn-secondary, btn-danger)">
             <div class="flex flex-wrap gap-3">
                 <x-button>Primary</x-button>
-                <x-button variant="secondary">Secondary (outline)</x-button>
-                <x-button variant="outline">Outline (same as secondary)</x-button>
+                <x-button variant="secondary">Secondary</x-button>
+                <x-button variant="outline">Outline (secondary)</x-button>
                 <x-button variant="danger">Danger</x-button>
-                <x-button variant="success">Success</x-button>
             </div>
-            <div class="mt-4 flex flex-wrap gap-3 rounded-xl bg-indigo-700 p-4">
-                <x-button variant="inverse" href="#">Inverse</x-button>
-                <x-button variant="outline-inverse" href="#">Outline inverse</x-button>
-            </div>
+            <p class="mt-3 text-small text-text-muted">Use <code class="rounded bg-background-muted px-1 py-0.5 text-xs">class=&quot;btn-*&quot;</code> on <code class="rounded bg-background-muted px-1 py-0.5 text-xs">&lt;button&gt;</code> or <code class="rounded bg-background-muted px-1 py-0.5 text-xs">&lt;a&gt;</code>, or the <code class="rounded bg-background-muted px-1 py-0.5 text-xs">x-button</code> component.</p>
         </x-card>
 
         <x-card header="Input + Error">

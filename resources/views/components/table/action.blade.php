@@ -28,15 +28,10 @@
 
     $confirmMessage = $confirm ?? (($formAction && $method !== 'get') ? $defaultConfirm : null);
 
-    $base = 'inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2';
-
-    $skin = match ($variant) {
-        'edit' => 'text-brand-700 bg-brand-50 hover:bg-brand-100 ring-1 ring-inset ring-brand-200/80',
-        'delete', 'danger' => 'text-red-700 bg-red-50 hover:bg-red-100 ring-1 ring-inset ring-red-200/80',
-        default => 'text-text bg-background-muted hover:bg-border/60 ring-1 ring-inset ring-border',
+    $btnClass = match ($variant) {
+        'delete', 'danger' => 'btn-danger',
+        default => 'btn-secondary',
     };
-
-    $btnClass = trim($base.' '.$skin);
 @endphp
 
 @php

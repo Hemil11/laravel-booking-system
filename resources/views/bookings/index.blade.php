@@ -45,7 +45,7 @@
                     <input
                         type="checkbox"
                         data-bulk-select-all
-                        class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                        class="checkbox"
                         aria-label="{{ __('Select all on this page') }}"
                     />
                 </th>
@@ -66,7 +66,7 @@
                             name="ids[]"
                             value="{{ $booking->id }}"
                             data-bulk-row
-                            class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                            class="checkbox"
                             aria-label="{{ __('Select booking #:id', ['id' => $booking->id]) }}"
                         />
                     </td>

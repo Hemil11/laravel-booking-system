@@ -11,10 +11,10 @@
     aria-labelledby="{{ $id }}-title"
     {{ $attributes->class([$show ? '' : 'hidden', 'fixed inset-0 z-50']) }}
 >
-    <div class="absolute inset-0 bg-slate-900/60"></div>
+    <div class="absolute inset-0 bg-gray-900/60"></div>
 
     <div class="relative flex min-h-full items-center justify-center p-4">
-        <div class="w-full max-w-lg rounded-2xl border border-border bg-background-elevated shadow-soft">
+        <div class="w-full max-w-lg rounded-2xl border border-gray-200 bg-white shadow-lg ring-1 ring-black/10">
             @if (filled($title))
                 <div class="border-b border-border px-5 py-4">
                     <h3 id="{{ $id }}-title" class="text-base font-semibold text-text">{{ $title }}</h3>
