@@ -13,7 +13,7 @@
 <div class="space-y-5">
     <div class="space-y-1.5">
         <label for="user_id" class="block text-sm font-medium text-text">Linked user</label>
-        <select id="user_id" name="user_id" required class="input @error('user_id') border-danger focus:border-danger focus:ring-red-200 @enderror">
+        <select id="user_id" name="user_id" required class="input @error('user_id') input-error @enderror">
             <option value="">— Select user —</option>
             @foreach ($users as $user)
                 <option value="{{ $user->id }}" @selected(old('user_id', $staff?->user_id) == $user->id)>
@@ -26,38 +26,38 @@
 
     <div class="space-y-1.5">
         <label for="full_name" class="block text-sm font-medium text-text">Display name</label>
-        <input id="full_name" name="full_name" type="text" class="input @error('full_name') border-danger focus:border-danger focus:ring-red-200 @enderror" value="{{ old('full_name', $staff?->full_name) }}" required maxlength="150">
+        <input id="full_name" name="full_name" type="text" class="input @error('full_name') input-error @enderror" value="{{ old('full_name', $staff?->full_name) }}" required maxlength="150">
         @error('full_name')<div class="mt-1 text-xs font-medium text-danger">{{ $message }}</div>@enderror
     </div>
 
     <div class="space-y-1.5">
         <label for="phone" class="block text-sm font-medium text-text">Phone</label>
-        <input id="phone" name="phone" type="text" class="input @error('phone') border-danger focus:border-danger focus:ring-red-200 @enderror" value="{{ old('phone', $staff?->phone) }}" maxlength="30">
+        <input id="phone" name="phone" type="text" class="input @error('phone') input-error @enderror" value="{{ old('phone', $staff?->phone) }}" maxlength="30">
         @error('phone')<div class="mt-1 text-xs font-medium text-danger">{{ $message }}</div>@enderror
     </div>
 
     <div class="space-y-1.5">
         <label for="bio" class="block text-sm font-medium text-text">Bio</label>
-        <textarea id="bio" name="bio" class="input min-h-28 resize-y @error('bio') border-danger focus:border-danger focus:ring-red-200 @enderror">{{ old('bio', $staff?->bio) }}</textarea>
+        <textarea id="bio" name="bio" class="input min-h-28 resize-y @error('bio') input-error @enderror">{{ old('bio', $staff?->bio) }}</textarea>
         @error('bio')<div class="mt-1 text-xs font-medium text-danger">{{ $message }}</div>@enderror
     </div>
 
     <div class="flex flex-wrap gap-6">
         <div class="space-y-1.5">
             <label for="start_time" class="block text-sm font-medium text-text">Working hours — start</label>
-            <input id="start_time" name="start_time" type="time" class="input @error('start_time') border-danger focus:border-danger focus:ring-red-200 @enderror" value="{{ old('start_time', $time($staff?->start_time, '09:00')) }}" required>
+            <input id="start_time" name="start_time" type="time" class="input @error('start_time') input-error @enderror" value="{{ old('start_time', $time($staff?->start_time, '09:00')) }}" required>
             @error('start_time')<div class="mt-1 text-xs font-medium text-danger">{{ $message }}</div>@enderror
         </div>
         <div class="space-y-1.5">
             <label for="end_time" class="block text-sm font-medium text-text">Working hours — end</label>
-            <input id="end_time" name="end_time" type="time" class="input @error('end_time') border-danger focus:border-danger focus:ring-red-200 @enderror" value="{{ old('end_time', $time($staff?->end_time, '17:00')) }}" required>
+            <input id="end_time" name="end_time" type="time" class="input @error('end_time') input-error @enderror" value="{{ old('end_time', $time($staff?->end_time, '17:00')) }}" required>
             @error('end_time')<div class="mt-1 text-xs font-medium text-danger">{{ $message }}</div>@enderror
         </div>
     </div>
 
     <div class="space-y-1.5">
         <label for="services" class="block text-sm font-medium text-text">Services offered</label>
-        <select id="services" name="services[]" multiple class="input min-h-32 @error('services') border-danger focus:border-danger focus:ring-red-200 @enderror @error('services.*') border-danger focus:border-danger focus:ring-red-200 @enderror">
+        <select id="services" name="services[]" multiple class="input min-h-32 @error('services') input-error @enderror @error('services.*') input-error @enderror">
             @foreach ($services as $service)
                 <option value="{{ $service->id }}" @selected(collect(old('services', $selectedServiceIds ?? []))->contains($service->id))>
                     {{ $service->name }} ({{ $service->duration }} min — {{ number_format((float) $service->price, 2) }})

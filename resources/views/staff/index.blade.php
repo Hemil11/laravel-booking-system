@@ -50,16 +50,15 @@
                 <td class="px-4 py-3">
                     <x-badge :status="$member->is_active ? 'active' : 'inactive'" />
                 </td>
-                <td class="px-4 py-3">
-                    <div class="flex justify-end gap-2">
-                        <x-button variant="secondary" href="{{ route('staff.edit', $member) }}">Edit</x-button>
-                        <form action="{{ route('staff.destroy', $member) }}" method="post" onsubmit="return confirm('Remove this staff profile?');">
-                            @csrf
-                            @method('DELETE')
-                            <x-button class="!bg-danger hover:!bg-red-700" type="submit">Delete</x-button>
-                        </form>
-                    </div>
-                </td>
+                <x-table.actions>
+                    <x-table.action variant="view" href="{{ route('staff.show', $member) }}" />
+                    <x-table.action variant="edit" href="{{ route('staff.edit', $member) }}" />
+                    <x-table.action
+                        variant="delete"
+                        :form-action="route('staff.destroy', $member)"
+                        :confirm="__('Remove this staff profile?')"
+                    />
+                </x-table.actions>
             </tr>
         @empty
             <tr>
@@ -68,7 +67,5 @@
         @endforelse
     </x-table>
 
-    <div class="mt-4">
-        {{ $staffMembers->links() }}
-    </div>
+    <x-pagination class="mt-8" :paginator="$staffMembers" />
 @endsection

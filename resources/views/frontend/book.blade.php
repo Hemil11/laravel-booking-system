@@ -10,7 +10,7 @@
         @guest
             <div class="card">
                 <p class="mb-4 text-small text-text-muted">Please sign in to submit an appointment request.</p>
-                <a href="{{ route('login') }}" class="btn-primary inline-flex w-full justify-center rounded-xl py-3.5 text-base shadow-soft transition hover:-translate-y-0.5 hover:shadow-md">
+                <a href="{{ route('login') }}" class="btn-primary w-full justify-center">
                     Log in to continue
                 </a>
             </div>
@@ -27,7 +27,7 @@
                                     id="staff_id"
                                     name="staff_id"
                                     required
-                                    class="input appearance-none pr-10 transition @error('staff_id') border-danger focus:border-danger focus:ring-red-200 @enderror"
+                                    class="input appearance-none pr-10 transition @error('staff_id') input-error @enderror"
                                 >
                                     <option value="">Select staff</option>
                                     @foreach ($staffMembers as $staff)
@@ -48,11 +48,11 @@
                                     id="service_id"
                                     name="service_id"
                                     required
-                                    class="input appearance-none pr-10 transition @error('service_id') border-danger focus:border-danger focus:ring-red-200 @enderror"
+                                    class="input appearance-none pr-10 transition @error('service_id') input-error @enderror"
                                 >
                                     <option value="">Select service</option>
                                     @foreach ($services as $service)
-                                        <option value="{{ $service->id }}" @selected(old('service_id') == $service->id)>{{ $service->name }} ({{ $service->duration }} min)</option>
+                                        <option value="{{ $service->id }}" @selected((string) old('service_id', request('service', request('service_id'))) === (string) $service->id)>{{ $service->name }} ({{ $service->duration }} min)</option>
                                     @endforeach
                                 </select>
                                 <svg class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1 text-text-subtle" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -71,7 +71,7 @@
                                 min="{{ now()->toDateString() }}"
                                 value="{{ old('date') }}"
                                 required
-                                    class="input transition @error('date') border-danger focus:border-danger focus:ring-red-200 @enderror"
+                                    class="input transition @error('date') input-error @enderror"
                             >
                             @error('date')<div class="mt-1 text-xs font-medium text-danger">{{ $message }}</div>@enderror
                         </div>
@@ -84,7 +84,7 @@
                                     name="time"
                                     required
                                     disabled
-                                    class="input appearance-none pr-10 transition disabled:cursor-not-allowed disabled:opacity-60 @error('time') border-danger focus:border-danger focus:ring-red-200 @enderror"
+                                    class="input appearance-none pr-10 transition disabled:cursor-not-allowed disabled:opacity-60 @error('time') input-error @enderror"
                                 >
                                     <option value="">Select staff, service and date first</option>
                                 </select>
@@ -94,7 +94,7 @@
                             </div>
                             <div id="slots-hint" class="text-sm text-text-muted"></div>
 
-                            <div id="selected-time-badge" class="hidden rounded-xl border border-brand-200 bg-brand-50 px-4 py-2 text-sm text-brand-700">
+                            <div id="selected-time-badge" class="hidden rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm text-indigo-700">
                                 Selected time: <span id="selected-time-value" class="font-semibold"></span>
                             </div>
 
@@ -106,7 +106,7 @@
                             <textarea
                                 id="notes"
                                 name="notes"
-                                class="input min-h-28 resize-y py-3 transition @error('notes') border-danger focus:border-danger focus:ring-red-200 @enderror"
+                                class="input min-h-28 resize-y py-3 transition @error('notes') input-error @enderror"
                             >{{ old('notes') }}</textarea>
                             @error('notes')<div class="mt-1 text-xs font-medium text-danger">{{ $message }}</div>@enderror
                         </div>
@@ -114,7 +114,7 @@
                         <button
                             type="submit"
                             id="book-submit"
-                            class="btn-primary w-full rounded-xl px-4 py-3.5 text-base shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+                            class="btn-primary w-full justify-center"
                             disabled
                         >
                             Submit booking
@@ -147,7 +147,7 @@
                 hint.textContent = '';
                 selectedBadge.classList.add('hidden');
                 selectedValue.textContent = '';
-                time.classList.remove('ring-2', 'ring-brand-200', 'border-brand-300');
+                time.classList.remove('ring-2', 'ring-indigo-200', 'border-indigo-300');
 
                 if (!staff.value || !service.value || !date.value) {
                     time.innerHTML = '<option value="">Select staff, service and date first</option>';
@@ -205,7 +205,7 @@
                 if (!time.value) {
                     selectedBadge.classList.add('hidden');
                     selectedValue.textContent = '';
-                    time.classList.remove('ring-2', 'ring-brand-200', 'border-brand-300');
+                    time.classList.remove('ring-2', 'ring-indigo-200', 'border-indigo-300');
                     return;
                 }
 
@@ -214,7 +214,7 @@
                 selectedBadge.classList.remove('hidden');
 
                 // Highlight the selected slot visually.
-                time.classList.add('ring-2', 'ring-brand-200', 'border-brand-300');
+                time.classList.add('ring-2', 'ring-indigo-200', 'border-indigo-300');
             });
 
             if (staff.value && service.value && date.value) {

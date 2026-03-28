@@ -1,23 +1,24 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Edit service')
+@section('title', __('Edit service'))
 
 @section('content')
-    <div class="mb-8">
-        <h1 class="text-h1 text-text">Edit service</h1>
-        <p class="mt-2 text-small text-text-muted">Update service details and media.</p>
-    </div>
-    <div class="card">
-        <div>
-        <form action="{{ route('services.update', $service) }}" method="post" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
-            @include('services._form', [
-                'service' => $service,
-                'submitLabel' => 'Save',
-                'cancelUrl' => route('services.show', $service),
-            ])
-        </form>
-        </div>
-    </div>
+    <x-admin.form-page
+        :title="__('Edit service')"
+        :description="__('Update how this service appears to customers and staff.')"
+        :back-href="route('services.index')"
+        :back-label="__('All services')"
+    >
+        <x-card :header="__('Service details')">
+            <form action="{{ route('services.update', $service) }}" method="post" enctype="multipart/form-data" class="space-y-0">
+                @csrf
+                @method('PUT')
+                @include('services._form', [
+                    'service' => $service,
+                    'submitLabel' => __('Save changes'),
+                    'cancelUrl' => route('services.index'),
+                ])
+            </form>
+        </x-card>
+    </x-admin.form-page>
 @endsection

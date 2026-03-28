@@ -1,71 +1,108 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Booking #' . $booking->id)
+@section('title', __('Booking #:id', ['id' => $booking->id]))
 
 @section('content')
-    <div class="mb-8">
-        <h1 class="text-h1 text-text">Booking #{{ $booking->id }}</h1>
-        <p class="mt-2 text-small text-text-muted">Booking details, invoice summary, and status actions.</p>
-    </div>
+    <x-admin.form-page
+        :title="__('Booking #:id', ['id' => $booking->id])"
+        :description="__('Details, invoice, and actions for this appointment.')"
+        :back-href="route('bookings.index')"
+        :back-label="__('All bookings')"
+    >
+        <div class="space-y-6">
+            <x-card :header="__('Summary')">
+                <dl class="grid gap-6 sm:grid-cols-2">
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ __('Status') }}</dt>
+                        <dd class="mt-1.5"><x-badge :status="$booking->status" /></dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ __('Date') }}</dt>
+                        <dd class="mt-1.5 text-base font-semibold text-slate-900">{{ $booking->date->format('Y-m-d') }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ __('Start time') }}</dt>
+                        <dd class="mt-1.5 text-base font-semibold text-slate-900">{{ substr((string) $booking->time, 0, 5) }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ __('Staff') }}</dt>
+                        <dd class="mt-1.5 text-base font-semibold text-slate-900">{{ $booking->staff?->full_name ?? '—' }}</dd>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ __('Service') }}</dt>
+                        <dd class="mt-1.5 text-base font-semibold text-slate-900">
+                            {{ $booking->service?->name ?? '—' }}
+                            @if ($booking->service)
+                                <span class="font-normal text-slate-500">({{ $booking->service->duration }} {{ __('min') }})</span>
+                            @endif
+                        </dd>
+                    </div>
+                </dl>
+            </x-card>
 
-    <div class="card space-y-8">
-        <div class="grid gap-4 md:grid-cols-2">
-            <div><span class="text-small text-text-muted">Status</span><p class="font-semibold text-text">{{ ucfirst($booking->status) }}</p></div>
-            <div><span class="text-small text-text-muted">Date</span><p class="font-semibold text-text">{{ $booking->date->format('Y-m-d') }}</p></div>
-            <div><span class="text-small text-text-muted">Start</span><p class="font-semibold text-text">{{ substr($booking->time, 0, 5) }}</p></div>
-            <div><span class="text-small text-text-muted">Staff</span><p class="font-semibold text-text">{{ $booking->staff?->full_name }}</p></div>
-            <div class="md:col-span-2"><span class="text-small text-text-muted">Service</span><p class="font-semibold text-text">{{ $booking->service?->name }} ({{ $booking->service?->duration }} min)</p></div>
-        </div>
+            @if ($booking->invoice)
+                <x-card :header="__('Invoice')">
+                    <dl class="grid gap-6 sm:grid-cols-3">
+                        <div>
+                            <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ __('Invoice #') }}</dt>
+                            <dd class="mt-1.5 font-mono text-base font-semibold text-slate-900">{{ $booking->invoice->id }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ __('Payment status') }}</dt>
+                            <dd class="mt-1.5"><x-badge :status="$booking->invoice->status === 'paid' ? 'paid' : 'pending'" /></dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ __('Total') }}</dt>
+                            <dd class="mt-1.5 text-base font-semibold text-slate-900">${{ number_format((float) $booking->invoice->total, 2) }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ __('Subtotal') }}</dt>
+                            <dd class="mt-1.5 text-slate-700">${{ number_format((float) $booking->invoice->amount, 2) }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ __('Tax') }}</dt>
+                            <dd class="mt-1.5 text-slate-700">${{ number_format((float) $booking->invoice->tax, 2) }}</dd>
+                        </div>
+                    </dl>
+                </x-card>
+            @endif
 
-        @if ($booking->invoice)
-            <div class="border-t border-border pt-6">
-                <h2 class="text-h3 text-text">Invoice</h2>
-                <div class="mt-4 grid gap-4 md:grid-cols-3">
-                    <div><span class="text-small text-text-muted">Invoice #</span><p class="font-semibold text-text">{{ $booking->invoice->id }}</p></div>
-                    <div><span class="text-small text-text-muted">Status</span><p class="font-semibold text-text">{{ ucfirst($booking->invoice->status) }}</p></div>
-                    <div><span class="text-small text-text-muted">Amount</span><p class="font-semibold text-text">{{ number_format((float) $booking->invoice->amount, 2) }}</p></div>
-                    <div><span class="text-small text-text-muted">Tax</span><p class="font-semibold text-text">{{ number_format((float) $booking->invoice->tax, 2) }}</p></div>
-                    <div><span class="text-small text-text-muted">Total</span><p class="font-semibold text-text">{{ number_format((float) $booking->invoice->total, 2) }}</p></div>
+            @if ($booking->notes)
+                <x-card :header="__('Customer notes')">
+                    <p class="text-sm leading-relaxed text-slate-700">{{ $booking->notes }}</p>
+                </x-card>
+            @endif
+
+            <x-card :header="__('Actions')">
+                <div class="flex flex-wrap gap-3">
+                    @if ($booking->status === 'pending')
+                        <form action="{{ route('bookings.confirm', $booking) }}" method="post" class="inline">
+                            @csrf
+                            <x-button type="submit">{{ __('Confirm booking') }}</x-button>
+                        </form>
+                    @endif
+
+                    @if ($booking->status !== 'cancelled')
+                        <form action="{{ route('bookings.cancel', $booking) }}" method="post" class="inline" onsubmit="return confirm(@js(__('Cancel this booking?')));">
+                            @csrf
+                            <x-button variant="danger" type="submit">{{ __('Cancel booking') }}</x-button>
+                        </form>
+                    @endif
+
+                    @if ($booking->invoice && $booking->status !== 'cancelled')
+                        <form action="{{ route('invoices.mock-payment', $booking->invoice) }}" method="post" class="inline">
+                            @csrf
+                            <input type="hidden" name="result" value="success">
+                            <x-button variant="success" type="submit">{{ __('Mock payment — success') }}</x-button>
+                        </form>
+                        <form action="{{ route('invoices.mock-payment', $booking->invoice) }}" method="post" class="inline">
+                            @csrf
+                            <input type="hidden" name="result" value="failure">
+                            <x-button variant="outline" type="submit">{{ __('Mock payment — failure') }}</x-button>
+                        </form>
+                    @endif
                 </div>
-            </div>
-        @endif
-
-        @if ($booking->notes)
-            <div class="border-t border-border pt-6">
-                <h2 class="text-h3 text-text">Notes</h2>
-                <p class="mt-2 text-small text-text-muted">{{ $booking->notes }}</p>
-            </div>
-        @endif
-
-        <div class="flex flex-wrap gap-2 border-t border-border pt-6">
-            <x-button variant="outline" href="{{ route('bookings.index') }}">All bookings</x-button>
-
-            @if ($booking->status === 'pending')
-                <form action="{{ route('bookings.confirm', $booking) }}" method="post" class="inline">
-                    @csrf
-                    <x-button type="submit">Confirm</x-button>
-                </form>
-            @endif
-
-            @if ($booking->status !== 'cancelled')
-                <form action="{{ route('bookings.cancel', $booking) }}" method="post" class="inline" onsubmit="return confirm('Cancel this booking?');">
-                    @csrf
-                    <x-button class="!bg-danger hover:!bg-red-700" type="submit">Cancel booking</x-button>
-                </form>
-            @endif
-
-            @if ($booking->invoice && $booking->status !== 'cancelled')
-                <form action="{{ route('invoices.mock-payment', $booking->invoice) }}" method="post" class="inline">
-                    @csrf
-                    <input type="hidden" name="result" value="success">
-                    <x-button class="!bg-success hover:!bg-emerald-700" type="submit">Mock payment success</x-button>
-                </form>
-                <form action="{{ route('invoices.mock-payment', $booking->invoice) }}" method="post" class="inline">
-                    @csrf
-                    <input type="hidden" name="result" value="failure">
-                    <x-button variant="outline" type="submit">Mock payment failure</x-button>
-                </form>
-            @endif
+            </x-card>
         </div>
-    </div>
+    </x-admin.form-page>
 @endsection

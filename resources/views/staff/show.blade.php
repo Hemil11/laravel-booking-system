@@ -41,7 +41,7 @@
             <form action="{{ route('staff.destroy', $staff) }}" method="post" class="inline" onsubmit="return confirm('Remove this staff profile?');">
                 @csrf
                 @method('DELETE')
-                <x-button class="!bg-danger hover:!bg-red-700" type="submit">Delete</x-button>
+                <x-button variant="danger" type="submit">Delete</x-button>
             </form>
         </div>
     </div>

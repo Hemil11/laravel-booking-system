@@ -55,13 +55,24 @@
             </div>
             <x-button variant="outline" href="{{ route('frontend.services') }}">View all</x-button>
         </div>
-        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @forelse($featuredServices as $service)
-                <article class="service-card">
-                    <h3 class="text-h3 text-text">{{ $service->name }}</h3>
-                    <p class="service-meta">{{ $service->duration }} minutes</p>
-                    <p class="service-price">${{ number_format((float) $service->price, 2) }}</p>
-                    <a href="{{ route('frontend.book') }}" class="service-button">Book this service</a>
+                <article class="flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-background-elevated shadow-soft transition duration-200 hover:shadow-lg">
+                    <a href="{{ route('frontend.services.show', $service) }}" class="block shrink-0 overflow-hidden bg-slate-100">
+                        @if (service_image_url($service->image_path))
+                            <img src="{{ service_image_url($service->image_path) }}" alt="" class="h-40 w-full object-cover sm:h-44">
+                        @else
+                            <div class="flex h-40 items-center justify-center text-sm text-text-muted sm:h-44">No image</div>
+                        @endif
+                    </a>
+                    <div class="flex flex-1 flex-col p-5">
+                        <h3 class="text-h3 text-text">
+                            <a href="{{ route('frontend.services.show', $service) }}" class="hover:text-brand-700">{{ $service->name }}</a>
+                        </h3>
+                        <p class="service-meta">{{ $service->duration }} minutes</p>
+                        <p class="service-price mt-auto">${{ number_format((float) $service->price, 2) }}</p>
+                        <a href="{{ route('frontend.services.show', $service) }}" class="service-button">View details</a>
+                    </div>
                 </article>
             @empty
                 <article class="rounded-2xl border border-border bg-background-elevated p-6 text-text-muted shadow-card">No services found yet.</article>
@@ -118,8 +129,8 @@
             <h2 class="text-h2 text-white">Ready to simplify your bookings?</h2>
             <p class="mt-2 max-w-2xl text-sm text-brand-100">Start with your next appointment in less than a minute and manage everything from one place.</p>
             <div class="mt-6 flex flex-wrap gap-3">
-                <x-button href="{{ route('frontend.book') }}" class="!bg-white !text-brand-700 hover:!bg-brand-50">Get started</x-button>
-                <x-button variant="outline" href="{{ route('frontend.services') }}" class="!border-brand-200 !text-white hover:!bg-brand-500">Explore services</x-button>
+                <x-button variant="inverse" href="{{ route('frontend.book') }}">Get started</x-button>
+                <x-button variant="outline-inverse" href="{{ route('frontend.services') }}">Explore services</x-button>
             </div>
         </div>
     </section>

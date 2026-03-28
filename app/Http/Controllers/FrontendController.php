@@ -46,6 +46,13 @@ class FrontendController extends Controller
         ]);
     }
 
+    public function serviceShow(Service $service): View
+    {
+        return view('frontend.service-detail', [
+            'service' => $service,
+        ]);
+    }
+
     public function book(): View
     {
         $staffMembers = collect();

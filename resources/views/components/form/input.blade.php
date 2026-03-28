@@ -10,11 +10,12 @@
 @php
     $hasError = $errors->has($name);
     $inputId = $attributes->get('id', $name);
+    $inputValue = $type === 'password' ? '' : old($name, $value);
 @endphp
 
 <div class="space-y-1.5">
     @if ($label)
-        <label for="{{ $inputId }}" class="block text-sm font-medium text-text">
+        <label for="{{ $inputId }}" class="block text-sm font-semibold text-text">
             {{ $label }}
             @if ($required)
                 <span class="text-danger">*</span>
@@ -23,16 +24,17 @@
     @endif
 
     <input
-        id="{{ $inputId }}"
-        name="{{ $name }}"
-        type="{{ $type }}"
-        value="{{ old($name, $value) }}"
-        placeholder="{{ $placeholder }}"
-        @required($required)
-        {{ $attributes->class([
+        {{ $attributes->merge([
+            'id' => $inputId,
+            'name' => $name,
+            'type' => $type,
+            'value' => $inputValue,
+            'placeholder' => $placeholder ?? '',
+        ])->class([
             'input',
-            'border-danger focus:border-danger focus:ring-red-200' => $hasError,
+            'input-error' => $hasError,
         ]) }}
+        @required($required)
     />
 
     @error($name)

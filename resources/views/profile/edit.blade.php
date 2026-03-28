@@ -15,19 +15,19 @@
             <div class="space-y-5">
                 <div class="space-y-1.5">
                     <label for="name" class="block text-sm font-medium text-text">Name</label>
-                    <input id="name" name="name" type="text" class="input @error('name') border-danger focus:border-danger focus:ring-red-200 @enderror" value="{{ old('name', $user->name) }}" required maxlength="255" autocomplete="name">
+                    <input id="name" name="name" type="text" class="input @error('name') input-error @enderror" value="{{ old('name', $user->name) }}" required maxlength="255" autocomplete="name">
                     @error('name')<div class="mt-1 text-xs font-medium text-danger">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="space-y-1.5">
                     <label for="email" class="block text-sm font-medium text-text">Email</label>
-                    <input id="email" name="email" type="email" class="input @error('email') border-danger focus:border-danger focus:ring-red-200 @enderror" value="{{ old('email', $user->email) }}" required autocomplete="email">
+                    <input id="email" name="email" type="email" class="input @error('email') input-error @enderror" value="{{ old('email', $user->email) }}" required autocomplete="email">
                     @error('email')<div class="mt-1 text-xs font-medium text-danger">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="space-y-1.5">
                     <label for="avatar" class="block text-sm font-medium text-text">Profile photo (optional)</label>
-                    <input id="avatar" name="avatar" type="file" class="input py-2 @error('avatar') border-danger focus:border-danger focus:ring-red-200 @enderror" accept="image/jpeg,image/png,image/gif,image/webp">
+                    <input id="avatar" name="avatar" type="file" class="input py-2 @error('avatar') input-error @enderror" accept="image/jpeg,image/png,image/gif,image/webp">
                     @error('avatar')<div class="mt-1 text-xs font-medium text-danger">{{ $message }}</div>@enderror
                 @if ($user->avatar_path)
                         <p class="mt-2 text-small text-text-muted">Current photo:</p>
@@ -37,7 +37,7 @@
 
                 <div class="space-y-1.5">
                     <label for="password" class="block text-sm font-medium text-text">New password (optional)</label>
-                    <input id="password" name="password" type="password" class="input @error('password') border-danger focus:border-danger focus:ring-red-200 @enderror" autocomplete="new-password">
+                    <input id="password" name="password" type="password" class="input @error('password') input-error @enderror" autocomplete="new-password">
                     @error('password')<div class="mt-1 text-xs font-medium text-danger">{{ $message }}</div>@enderror
                 </div>
 

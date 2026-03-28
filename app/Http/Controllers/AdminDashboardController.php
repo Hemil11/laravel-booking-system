@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Invoice;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\View\View;
@@ -16,16 +17,13 @@ class AdminDashboardController extends Controller
     public function __invoke(): View
     {
         $totalBookings = Booking::query()->count();
-        $mockAverageBookingValue = 72.50;
+        $revenuePaid = (float) Invoice::query()->where('status', 'paid')->sum('total');
 
         $stats = [
             'users' => User::query()->count(),
             'bookings' => $totalBookings,
             'services' => Service::query()->count(),
-            'todays_bookings' => Booking::query()
-                ->whereDate('date', now()->toDateString())
-                ->count(),
-            'revenue_mock' => round($totalBookings * $mockAverageBookingValue, 2),
+            'revenue' => $revenuePaid,
         ];
 
         return view('admin.dashboard', compact('stats'));

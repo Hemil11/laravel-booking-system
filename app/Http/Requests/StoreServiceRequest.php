@@ -16,6 +16,7 @@ class StoreServiceRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:120', 'unique:services,name'],
+            'description' => ['nullable', 'string', 'max:5000'],
             'duration' => ['required', 'integer', 'min:1', 'max:10080'],
             'price' => ['required', 'numeric', 'min:0', 'max:99999999.99'],
             'image' => MediaValidation::optionalImage(),

@@ -11,7 +11,6 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -45,21 +44,31 @@ class DatabaseSeeder extends Seeder
         ]);
         $customerRole->permissions()->sync([]);
 
-        // Services
-        $services = Service::factory()->count(10)->create();
+        $this->call([
+            UserSeeder::class,
+            ServiceSeeder::class,
+        ]);
 
-        // Admin user
-        $admin = User::firstOrCreate(
-            ['email' => 'admin@example.com'],
-            [
-                'name' => 'Admin',
-                'password' => Hash::make('password'),
-            ]
-        );
-        $admin->roles()->sync([$adminRole->id]);
+        $services = Service::query()->orderBy('id')->get();
 
-        // Staff
-        $staffUsers = User::factory()->count(6)->create();
+        $primaryStaff = Staff::query()
+            ->whereRelation('user', 'email', 'staff@admin.com')
+            ->firstOrFail();
+
+        $offered = $services->count() >= 6
+            ? $services->random(6)
+            : $services;
+        $primaryPivot = [];
+        foreach ($offered as $service) {
+            $primaryPivot[$service->id] = [
+                'is_active' => true,
+                'price_override_cents' => null,
+                'currency' => 'USD',
+            ];
+        }
+        $primaryStaff->services()->sync($primaryPivot);
+
+        $staffUsers = User::factory()->count(5)->create();
         $staffs = $staffUsers->map(function (User $user) use ($staffRole) {
             $staff = Staff::factory()->create([
                 'user_id' => $user->id,
@@ -70,28 +79,36 @@ class DatabaseSeeder extends Seeder
             return $staff;
         });
 
-        // Staff <-> Services pivot
-        $staffs->each(function (Staff $staff) use ($services) {
-            $offered = $services->random(rand(3, 6));
+        $allStaffForBookings = $staffs->push($primaryStaff);
 
+        $allStaffForBookings->each(function (Staff $staff) use ($services, $primaryStaff) {
+            if ($staff->is($primaryStaff)) {
+                return;
+            }
+
+            $count = min(6, max(3, $services->count()));
+            $offered = $services->random(min($count, $services->count()));
+            $pivot = [];
             foreach ($offered as $service) {
-                $staff->services()->attach($service->id, [
+                $pivot[$service->id] = [
                     'is_active' => true,
                     'price_override_cents' => fake()->boolean(70) ? null : fake()->numberBetween(2000, 10000),
                     'currency' => 'USD',
-                ]);
+                ];
             }
+            $staff->services()->sync($pivot);
         });
 
-        // Customers
-        $customers = User::factory()->count(30)->create();
+        $customers = User::factory()->count(25)->create();
         $customers->each(function (User $user) use ($customerRole) {
             $user->roles()->sync([$customerRole->id]);
         });
 
-        // Create bookings aligned to a 30-minute grid with no overlaps per staff.
+        $demoCustomer = User::query()->where('email', 'demo@admin.com')->firstOrFail();
+        $customers = $customers->push($demoCustomer);
+
         $baseDate = Carbon::now();
-        foreach ($staffs as $staff) {
+        foreach ($allStaffForBookings as $staff) {
             $date = $baseDate->copy()->addDays(rand(1, 14))->toDateString();
             $current = Carbon::createFromTime(9, 0);
             $end = Carbon::createFromTime(17, 0);

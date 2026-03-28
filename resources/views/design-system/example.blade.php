@@ -13,9 +13,15 @@
 
         <x-card header="Buttons">
             <div class="flex flex-wrap gap-3">
-                <x-button>Primary button</x-button>
-                <x-button variant="secondary">Secondary button</x-button>
-                <x-button variant="outline">Outline button</x-button>
+                <x-button>Primary</x-button>
+                <x-button variant="secondary">Secondary (outline)</x-button>
+                <x-button variant="outline">Outline (same as secondary)</x-button>
+                <x-button variant="danger">Danger</x-button>
+                <x-button variant="success">Success</x-button>
+            </div>
+            <div class="mt-4 flex flex-wrap gap-3 rounded-xl bg-indigo-700 p-4">
+                <x-button variant="inverse" href="#">Inverse</x-button>
+                <x-button variant="outline-inverse" href="#">Outline inverse</x-button>
             </div>
         </x-card>
 
@@ -44,25 +50,36 @@
             </x-card>
         </section>
 
-        <x-card header="Styled Table">
+        <x-card header="Table (striped, hover, actions)">
             <x-table>
                 <x-slot:head>
                     <th class="px-4 py-3">Booking</th>
                     <th class="px-4 py-3">Customer</th>
                     <th class="px-4 py-3">Status</th>
+                    <th class="px-4 py-3 text-right">Actions</th>
                 </x-slot:head>
 
                 <tr>
                     <td class="px-4 py-3">#BKG-001</td>
                     <td class="px-4 py-3">Ava Smith</td>
                     <td class="px-4 py-3"><x-badge status="confirmed" /></td>
+                    <x-table.actions>
+                        <x-table.action variant="view" href="#" />
+                        <x-table.action variant="edit" href="#" />
+                        {{-- Delete: <x-table.action variant="delete" :form-action="route('...')" :confirm="__('...?')" /> --}}
+                    </x-table.actions>
                 </tr>
                 <tr>
                     <td class="px-4 py-3">#BKG-002</td>
                     <td class="px-4 py-3">Noah Brown</td>
                     <td class="px-4 py-3"><x-badge status="cancelled" /></td>
+                    <x-table.actions>
+                        <x-table.action variant="view" href="#" />
+                        <x-table.action variant="edit" href="#" />
+                    </x-table.actions>
                 </tr>
             </x-table>
+            <p class="mt-3 text-small text-text-muted">Disable striping or row hover with <code class="rounded bg-background-muted px-1 py-0.5 text-xs">:striped="false"</code> or <code class="rounded bg-background-muted px-1 py-0.5 text-xs">:hover="false"</code> on <code class="rounded bg-background-muted px-1 py-0.5 text-xs">x-table</code>.</p>
         </x-card>
     </div>
 

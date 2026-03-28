@@ -37,7 +37,7 @@
                             value="{{ old('email') }}"
                             required
                             autocomplete="email"
-                            class="input py-3 @error('email') border-danger focus:border-danger focus:ring-red-200 @enderror"
+                            class="input py-3 @error('email') input-error @enderror"
                             placeholder="you@example.com"
                         >
                         @error('email')<p class="mt-1 text-xs font-medium text-danger">{{ $message }}</p>@enderror
@@ -51,7 +51,7 @@
                             type="password"
                             required
                             autocomplete="current-password"
-                            class="input py-3 @error('password') border-danger focus:border-danger focus:ring-red-200 @enderror"
+                            class="input py-3 @error('password') input-error @enderror"
                             placeholder="Enter your password"
                         >
                         @error('password')<p class="mt-1 text-xs font-medium text-danger">{{ $message }}</p>@enderror
@@ -59,18 +59,18 @@
 
                     <div class="flex items-center justify-between gap-3">
                         <label for="remember" class="inline-flex items-center gap-2 text-sm text-text-muted">
-                            <input id="remember" name="remember" type="checkbox" value="1" class="h-4 w-4 rounded border-border text-brand-600 focus:ring-brand-300">
+                            <input id="remember" name="remember" type="checkbox" value="1" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/40">
                             <span>Remember me</span>
                         </label>
 
                         @if (Route::has('password.request'))
-                            <a href="{{ route('password.request') }}" class="text-sm font-medium text-brand-700 hover:text-brand-800 hover:underline">
+                            <a href="{{ route('password.request') }}" class="link text-sm">
                                 Forgot password?
                             </a>
                         @endif
                     </div>
 
-                    <button type="submit" class="btn-primary w-full rounded-xl px-4 py-3.5 text-base shadow-soft transition hover:-translate-y-0.5 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60">
+                    <button type="submit" class="btn-primary w-full justify-center">
                         Sign in
                     </button>
                 </form>
@@ -81,7 +81,7 @@
     @if (Route::has('register'))
         <div class="mt-6 text-center text-sm text-text-muted">
             Need an account?
-            <a href="{{ route('register') }}" class="font-semibold text-brand-700 hover:text-brand-800 hover:underline">Create one</a>
+            <a href="{{ route('register') }}" class="link font-semibold">Create one</a>
         </div>
     @endif
 @endsection

@@ -32,7 +32,7 @@
                             name="message"
                             maxlength="2000"
                             required
-                            class="input min-h-32 resize-y @error('message') border-danger focus:border-danger focus:ring-red-200 @enderror"
+                            class="input min-h-32 resize-y @error('message') input-error @enderror"
                         >{{ old('message') }}</textarea>
                         @error('message')<p class="mt-1 text-xs font-medium text-danger">{{ $message }}</p>@enderror
                     </div>

@@ -15,16 +15,16 @@
 
                 <nav class="hidden items-center gap-2 lg:gap-3 md:flex">
                     <a href="{{ route('frontend.home') }}" class="{{ $navLinkBase }} {{ request()->routeIs('frontend.home') ? 'bg-brand-50 text-brand-700' : 'text-text-muted hover:bg-background-muted hover:text-brand-700' }}">Home</a>
-                    <a href="{{ route('frontend.services') }}" class="{{ $navLinkBase }} {{ request()->routeIs('frontend.services') ? 'bg-brand-50 text-brand-700' : 'text-text-muted hover:bg-background-muted hover:text-brand-700' }}">Services</a>
+                    <a href="{{ route('frontend.services') }}" class="{{ $navLinkBase }} {{ request()->routeIs('frontend.services', 'frontend.services.show') ? 'bg-brand-50 text-brand-700' : 'text-text-muted hover:bg-background-muted hover:text-brand-700' }}">Services</a>
                     <a href="{{ route('frontend.book') }}" class="{{ $navLinkBase }} {{ request()->routeIs('frontend.book') ? 'bg-brand-50 text-brand-700' : 'text-text-muted hover:bg-background-muted hover:text-brand-700' }}">Book appointment</a>
                     <a href="{{ route('frontend.contact') }}" class="{{ $navLinkBase }} {{ request()->routeIs('frontend.contact') ? 'bg-brand-50 text-brand-700' : 'text-text-muted hover:bg-background-muted hover:text-brand-700' }}">Contact</a>
                 </nav>
 
                 <div class="hidden items-center gap-2 md:flex">
                     @auth
-                        <a href="{{ route('bookings.index') }}" class="inline-flex items-center rounded-xl border border-border bg-white px-4 py-2 text-sm font-semibold text-text shadow-sm transition hover:-translate-y-0.5 hover:bg-background-muted hover:shadow">My bookings</a>
+                        <a href="{{ route('bookings.index') }}" class="btn-secondary">My bookings</a>
                     @else
-                        <a href="{{ route('login') }}" class="inline-flex items-center rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">Log in</a>
+                        <a href="{{ route('login') }}" class="btn-primary">Log in</a>
                     @endauth
                 </div>
 
@@ -36,14 +36,14 @@
                     </summary>
                     <div class="absolute right-0 mt-2 w-52 rounded-xl border border-border bg-white p-2 shadow-soft">
                         <a href="{{ route('frontend.home') }}" class="block rounded-lg px-3 py-2 text-sm {{ request()->routeIs('frontend.home') ? 'bg-brand-50 font-medium text-brand-700' : 'text-text hover:bg-background-muted' }}">Home</a>
-                        <a href="{{ route('frontend.services') }}" class="block rounded-lg px-3 py-2 text-sm {{ request()->routeIs('frontend.services') ? 'bg-brand-50 font-medium text-brand-700' : 'text-text hover:bg-background-muted' }}">Services</a>
+                        <a href="{{ route('frontend.services') }}" class="block rounded-lg px-3 py-2 text-sm {{ request()->routeIs('frontend.services', 'frontend.services.show') ? 'bg-brand-50 font-medium text-brand-700' : 'text-text hover:bg-background-muted' }}">Services</a>
                         <a href="{{ route('frontend.book') }}" class="block rounded-lg px-3 py-2 text-sm {{ request()->routeIs('frontend.book') ? 'bg-brand-50 font-medium text-brand-700' : 'text-text hover:bg-background-muted' }}">Book appointment</a>
                         <a href="{{ route('frontend.contact') }}" class="block rounded-lg px-3 py-2 text-sm {{ request()->routeIs('frontend.contact') ? 'bg-brand-50 font-medium text-brand-700' : 'text-text hover:bg-background-muted' }}">Contact</a>
                         <div class="mt-1 border-t border-border pt-2">
                             @auth
                                 <a href="{{ route('bookings.index') }}" class="block rounded-lg px-3 py-2 text-sm text-text hover:bg-background-muted">My bookings</a>
                             @else
-                                <a href="{{ route('login') }}" class="block rounded-lg bg-brand-600 px-3 py-2 text-sm font-semibold text-white hover:bg-brand-700">Log in</a>
+                                <a href="{{ route('login') }}" class="btn-primary w-full justify-center">Log in</a>
                             @endauth
                         </div>
                     </div>
