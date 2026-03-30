@@ -63,18 +63,28 @@
 
 ---
 
-## Setup
+## Installation (Step-by-step)
 
-### 1. Clone and install dependencies
+### 1. Clone the repository
 
 ```bash
 git clone <repository-url> laravel-booking-system
 cd laravel-booking-system
+```
+
+### 2. Install PHP dependencies
+
+```bash
 composer install
+```
+
+### 3. Install Node dependencies
+
+```bash
 npm install
 ```
 
-### 2. Environment
+### 4. Set up your `.env` file
 
 ```bash
 # Windows
@@ -86,14 +96,14 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-Edit **`.env`**:
+Then edit **`.env`**:
 
-- Set **`APP_NAME`** and **`APP_URL`** to match your local URL (e.g. `http://127.0.0.1:8000`).  
-- **Database** — either:
-  - **SQLite:** `DB_CONNECTION=sqlite` and ensure `database/database.sqlite` exists (`type nul > database\database.sqlite` on Windows, or `touch database/database.sqlite` on Unix), or  
-  - **MySQL / etc.:** set `DB_CONNECTION`, `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`.
+- Set **`APP_NAME`** and **`APP_URL`** (example: `http://127.0.0.1:8000`)  
+- Choose your database:
+  - **SQLite (quickest):** set `DB_CONNECTION=sqlite` and ensure `database/database.sqlite` exists  
+  - **MySQL / PostgreSQL:** set `DB_CONNECTION`, `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`
 
-### 3. Database
+### 5. Migrate and seed the database
 
 ```bash
 php artisan migrate
@@ -102,25 +112,25 @@ php artisan db:seed
 
 Seeding creates **roles**, **permissions**, **sample services**, **staff**, **linked user accounts**, and **demo bookings**.
 
-### 4. Frontend assets
+### 6. Compile frontend assets (recommended for first run)
 
 ```bash
 npm run build
 ```
 
-For local development with hot reload:
+Optional (hot reload):
 
 ```bash
 npm run dev
 ```
 
-### 5. Run the app
+### 7. Run the server
 
 ```bash
 php artisan serve
 ```
 
-Open **`http://127.0.0.1:8000`** (or your `APP_URL`).
+Open **`http://127.0.0.1:8000`** (or your configured `APP_URL`).
 
 ### One-command bootstrap (optional)
 
@@ -131,6 +141,37 @@ composer run setup
 ```
 
 You still need to configure **`.env`** (especially `DB_*`) before or after, depending on your database choice.
+
+---
+## Usage
+
+After setup, you can explore the app in two ways:
+
+### Web app (recommended for demos)
+
+1. Open your app in the browser (see `APP_URL`, default: `http://127.0.0.1:8000`).
+2. Log in at `/login`.
+3. Use:
+   - `/admin` for the admin dashboard
+   - `/bookings` and `/bookings/calendar` for booking management and scheduling
+4. Book and manage appointments using the seeded demo roles (see “Demo credentials” below).
+
+### REST API (recommended for integrations)
+
+1. Authenticate via `POST /api/register` or `POST /api/login`.
+2. Use the returned `data.token` as `Authorization: Bearer {token}`.
+3. Call `GET /api/services`, `GET /api/available-slots`, then `POST /api/bookings`.
+
+---
+## Screenshots
+
+Placeholders for marketing + recruiter-friendly visuals:
+
+- Customer booking flow: `docs/screenshots/customer-booking.png`
+- Booking calendar (day/week): `docs/screenshots/booking-calendar.png`
+- Admin dashboard: `docs/screenshots/admin-dashboard.png`
+- Staff/staff-services setup: `docs/screenshots/staff-setup.png`
+- Invoice PDF preview: `docs/screenshots/invoice-pdf.png`
 
 ---
 
@@ -152,22 +193,191 @@ After **`php artisan db:seed`**, these accounts exist (**all use the same passwo
 
 ---
 
-## API overview
+## API Documentation (Laravel Sanctum)
 
-Base URL: `{APP_URL}/api` — send **`Accept: application/json`**.
+Base URL: `{APP_URL}/api` (for example: `http://127.0.0.1:8000/api`)  
+Always send `Accept: application/json`.
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| `POST` | `/api/register` | — | Register; returns Bearer token + user |
-| `POST` | `/api/login` | — | Login; returns Bearer token + user |
-| `GET` | `/api/services` | — | List services (cached payload) |
-| `GET` | `/api/available-slots` | — | Query: `staff_id`, `service_id`, `date` (`Y-m-d`) |
-| `POST` | `/api/bookings` | **Bearer token** | Create booking (`staff_id`, `service_id`, `date`, `time`, optional `notes`) |
-| `POST` | `/api/invoices/{invoice}/mock-payment` | **Bearer token** | Demo payment (`result`: `success` or `failure`) |
+### Authentication (Sanctum)
 
-Success responses use a consistent envelope: `success`, `message`, and `data`.
+- `POST /api/register` and `POST /api/login` are public.
+- Authenticated requests require a Bearer token generated via Sanctum:
+  - `Authorization: Bearer {token}`
+- After `register` or `login`, the API returns:
+  - `data.token` (string)
+  - `data.token_type` (`"Bearer"`)
 
-**Postman:** import **`postman/Booking-API.postman_collection.json`** for ready-made requests.
+For a quick start, you can `POST /api/login` with the seeded Customer: `demo@admin.com` / `password`.
+
+### Response format (standard envelope)
+
+Success (`2xx`):
+```json
+{
+  "success": true,
+  "message": "OK",
+  "data": { }
+}
+```
+
+Error (`4xx`):
+```json
+{
+  "success": false,
+  "message": "Error message",
+  "errors": { }
+}
+```
+
+Notes:
+- Validation failures return `422` with a field-level `errors` object.
+- Unauthenticated requests return `401` with `errors: null`.
+
+### Endpoints
+
+#### 1) Register
+`POST /api/register` (public)
+
+Request JSON:
+```json
+{
+  "name": "Jane Customer",
+  "email": "jane.customer@example.com",
+  "password": "Password1!",
+  "password_confirmation": "Password1!"
+}
+```
+
+Success response (`201`):
+```json
+{
+  "success": true,
+  "message": "Registration successful.",
+  "data": {
+    "token": "YOUR_TOKEN",
+    "token_type": "Bearer",
+    "user": { "id": 1, "name": "Jane Customer", "email": "jane.customer@example.com" }
+  }
+}
+```
+
+#### 2) Login
+`POST /api/login` (public)
+
+Request JSON:
+```json
+{
+  "email": "admin@example.com",
+  "password": "password"
+}
+```
+
+Success response (`200`):
+```json
+{
+  "success": true,
+  "message": "Login successful.",
+  "data": {
+    "token": "YOUR_TOKEN",
+    "token_type": "Bearer",
+    "user": { "id": 1, "name": "Admin Name", "email": "admin@example.com" }
+  }
+}
+```
+
+#### 3) Services list
+`GET /api/services` (public)
+
+No request body.
+
+Success response (`200`):
+```json
+{
+  "success": true,
+  "message": "OK",
+  "data": {
+    "services": [
+      { "id": 1, "name": "Consultation", "duration": 60, "price": 1500 }
+    ]
+  }
+}
+```
+
+#### 4) Available slots
+`GET /api/available-slots` (public)
+
+Query parameters:
+- `staff_id` (required, integer, must exist in `staffs`)
+- `service_id` (required, integer, must exist in `services`)
+- `date` (required, `YYYY-MM-DD`, must be today or later)
+
+Example:
+`GET /api/available-slots?staff_id=1&service_id=1&date=2026-03-27`
+
+Success response (`200`):
+```json
+{
+  "success": true,
+  "message": "OK",
+  "data": {
+    "slots": [
+      { "start": "09:00:00", "label": "9:00 AM" }
+    ]
+  }
+}
+```
+
+#### 5) Create booking
+`POST /api/bookings` (authenticated, Sanctum)
+
+Headers:
+- `Authorization: Bearer {token}`
+- `Accept: application/json`
+- `Content-Type: application/json`
+
+Request JSON:
+```json
+{
+  "staff_id": 1,
+  "service_id": 1,
+  "date": "2026-03-27",
+  "time": "09:00",
+  "notes": "Optional note for the booking."
+}
+```
+
+Rules:
+- `time` must match `H:i` (24-hour), e.g. `"09:30"`.
+- `notes` is optional, `max: 2000`.
+- On creation, the API sets the booking status to `pending`.
+
+Success response (`201`):
+```json
+{
+  "success": true,
+  "message": "Booking created.",
+  "data": {
+    "booking": {
+      "id": 123,
+      "user_id": 5,
+      "staff_id": 1,
+      "service_id": 1,
+      "date": "2026-03-27",
+      "time": "09:00:00",
+      "status": "pending",
+      "notes": "Optional note for the booking.",
+      "staff": { "id": 1, "full_name": "John Doe" },
+      "service": { "id": 1, "name": "Consultation", "duration": 60 },
+      "invoice": null
+    }
+  }
+}
+```
+
+Possible errors:
+- `409` if the selected slot conflicts with an existing booking.
+
+**Postman:** import `postman/Booking-API.postman_collection.json` for ready-made requests.
 
 ---
 
@@ -212,6 +422,45 @@ routes/api.php
 ---
 
 ## License
+
+---
+
+## Future Roadmap (Vision, Realistic Milestones)
+
+This project is designed as a strong starting point for a production-grade booking platform. Planned enhancements focus on payments, scheduling UX, communication, scalability, and channel expansion.
+
+### 1) Payment integration
+
+- Replace the current demo “mock payment” with real payments (e.g., Stripe/PayPal).
+- Support payment lifecycle states (authorized, captured, refunded) and sync booking status accordingly.
+- Add webhooks for reliable payment status updates.
+
+### 2) Calendar view upgrades
+
+- Improve the calendar UI with smoother drag-and-drop and richer slot visualization.
+- Add per-service/per-staff views and better conflict highlighting.
+- Support recurring appointments and bulk booking patterns (where business rules allow).
+
+### 3) Notifications (more channels + smarter triggers)
+
+- Expand beyond email to include SMS and/or WhatsApp for booking confirmations and reminders.
+- Add configurable notification schedules (remind X hours/days before appointment).
+- Improve personalization (service name, staff name, confirmation/changes history).
+
+### 4) Multi-tenant support
+
+- Introduce tenant isolation so multiple businesses can run in the same app:
+  - tenant-aware data scoping (services, staff, bookings, invoices)
+  - tenant-specific configuration (working hours, taxes, notification emails)
+- Add a tenant switcher and tenant-scoped permissions for administrators.
+
+### 5) Mobile app support
+
+- Prepare the system for mobile clients by formalizing/expanding the REST API.
+- Add push notifications for booking updates and reminders.
+- Optionally introduce a mobile-friendly booking experience (mobile web now, native app later) using the same API backend.
+
+---
 
 This project is provided as a **demo / portfolio** codebase. Add a `LICENSE` file (e.g. MIT) when you publish your own fork.
 
