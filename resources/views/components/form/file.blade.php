@@ -9,6 +9,14 @@
 @php
     $hasError = $errors->has($name);
     $inputId = $attributes->get('id', $name);
+    $ariaDescribedBy = [];
+    if ($hint) {
+        $ariaDescribedBy[] = $inputId . '-hint';
+    }
+    if ($hasError) {
+        $ariaDescribedBy[] = $inputId . '-error';
+    }
+    $ariaDescribedByAttr = !empty($ariaDescribedBy) ? implode(' ', $ariaDescribedBy) : null;
 @endphp
 
 <div class="space-y-1.5">
@@ -39,9 +47,10 @@
         ]) }}
         @if ($accept) accept="{{ $accept }}" @endif
         @required($required)
+        @if($ariaDescribedByAttr) aria-describedby="{{ $ariaDescribedByAttr }}" @endif
     />
 
     @error($name)
-        <p class="mt-1 text-xs font-medium text-danger">{{ $message }}</p>
+        <p id="{{ $inputId }}-error" class="mt-1 text-xs font-medium text-danger">{{ $message }}</p>
     @enderror
 </div>
