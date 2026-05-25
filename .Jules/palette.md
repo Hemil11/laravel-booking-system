@@ -1,0 +1,3 @@
+## 2026-05-06 - Connect form hints and validation errors to inputs
+**Learning:** Found an accessibility issue pattern where form input hints and validation error messages were visually displayed but not programmatically associated with their corresponding form elements via `aria-describedby`. This prevents screen readers from automatically announcing the hint or error when the user focuses on the field.
+**Action:** Always ensure that any supplemental descriptive text (like hints or validation errors) has a unique ID and is explicitly linked to its input element using the `aria-describedby` attribute.

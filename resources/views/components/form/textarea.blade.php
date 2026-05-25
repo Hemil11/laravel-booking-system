@@ -14,6 +14,14 @@
     $inputId = $attributes->get('id', $name);
     $areaValue = old($name, $value);
     $resolvedLabelClass = $labelClass ?? 'block text-sm font-semibold text-gray-900';
+    $ariaDescribedBy = [];
+    if ($hint) {
+        $ariaDescribedBy[] = $inputId . '-hint';
+    }
+    if ($hasError) {
+        $ariaDescribedBy[] = $inputId . '-error';
+    }
+    $ariaDescribedByAttr = !empty($ariaDescribedBy) ? implode(' ', $ariaDescribedBy) : null;
 @endphp
 
 <div class="space-y-1.5">
@@ -42,9 +50,10 @@
             'input-error' => $hasError,
         ]) }}
         @required($required)
+        @if($ariaDescribedByAttr) aria-describedby="{{ $ariaDescribedByAttr }}" @endif
     >{{ $areaValue }}</textarea>
 
     @error($name)
-        <p class="mt-1 text-xs font-medium text-danger">{{ $message }}</p>
+        <p id="{{ $inputId }}-error" class="mt-1 text-xs font-medium text-danger">{{ $message }}</p>
     @enderror
 </div>
