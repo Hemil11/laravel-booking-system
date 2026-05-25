@@ -106,4 +106,44 @@ class FrontendController extends Controller
                 'name' => $request->validated('name'),
             ]));
     }
+
+    public function about(): View
+    {
+        return view('frontend.about');
+    }
+
+    public function careers(): View
+    {
+        return view('frontend.careers');
+    }
+
+    public function privacy(): View
+    {
+        return view('frontend.privacy');
+    }
+
+    public function terms(): View
+    {
+        return view('frontend.terms');
+    }
+
+    public function refund(): View
+    {
+        return view('frontend.refund');
+    }
+
+    public function dataDeletion(): View
+    {
+        return view('frontend.data-deletion');
+    }
+
+    public function help(): View
+    {
+        return view('frontend.help');
+    }
+
+    public function faq(): View
+    {
+        return view('frontend.faq');
+    }
 }

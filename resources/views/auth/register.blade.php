@@ -1,13 +1,13 @@
 @extends('layouts.auth')
 
-@section('title', __('Register'))
+@section('title', __('Create Account'))
 
 @section('content')
     <div class="auth-shell">
         <div class="mb-8 text-center">
-            <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-[1.75rem]">{{ __('Create your account') }}</h1>
-            <p class="mt-2 text-sm leading-relaxed text-gray-500">
-                {{ __('Get started in a minute. Book services and manage your appointments.') }}
+            <h1 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl font-display">{{ __('Create your account') }}</h1>
+            <p class="mt-2 text-sm leading-relaxed text-slate-400">
+                {{ __('Get started in less than a minute. Book services and manage scheduling.') }}
             </p>
         </div>
 
@@ -17,7 +17,7 @@
 
                 <x-form.input
                     name="name"
-                    :label="__('Name')"
+                    :label="__('Full Name')"
                     label-class="auth-field-label"
                     :auth-field="true"
                     required
@@ -28,7 +28,7 @@
 
                 <x-form.input
                     name="email"
-                    :label="__('Email')"
+                    :label="__('Email Address')"
                     label-class="auth-field-label"
                     :auth-field="true"
                     type="email"
@@ -50,7 +50,7 @@
 
                 <x-form.input
                     name="password_confirmation"
-                    :label="__('Confirm password')"
+                    :label="__('Confirm Password')"
                     label-class="auth-field-label"
                     :auth-field="true"
                     type="password"
@@ -61,13 +61,13 @@
 
                 <div class="pt-1">
                     <button type="submit" class="auth-cta">
-                        {{ __('Create account') }}
+                        {{ __('Create Account') }}
                     </button>
                 </div>
             </form>
         </div>
 
-        <p class="mt-8 text-center text-sm text-gray-600">
+        <p class="mt-8 text-center text-sm text-slate-400">
             {{ __('Already have an account?') }}
             <a href="{{ route('login') }}" class="link font-semibold">{{ __('Sign in') }}</a>
         </p>

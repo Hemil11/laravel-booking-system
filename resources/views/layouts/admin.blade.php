@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('body_class', 'min-h-screen bg-gray-100 text-gray-900 antialiased')
+@section('body_class', 'min-h-screen bg-[#030508] text-white antialiased')
 
 @section('layout')
     @auth
@@ -12,32 +12,32 @@
             $adminHomeUrl = $canManageUsers ? route('admin.dashboard') : route('bookings.index');
         @endphp
 
-        <div class="flex min-h-screen">
+        <div class="flex min-h-screen bg-[#030508] text-white">
             {{-- Mobile overlay --}}
             <div
                 id="admin-sidebar-backdrop"
-                class="fixed inset-0 z-40 hidden bg-gray-950/70 backdrop-blur-sm transition-opacity lg:hidden"
+                class="fixed inset-0 z-40 hidden bg-black/80 backdrop-blur-sm transition-opacity lg:hidden"
                 aria-hidden="true"
             ></div>
 
             {{-- Dark sidebar --}}
             <aside
                 id="admin-sidebar"
-                class="admin-sidebar"
+                class="admin-sidebar bg-[#020306] border-r border-white/5"
                 aria-label="{{ __('Admin navigation') }}"
             >
-                <div class="admin-sidebar-brand">
+                <div class="admin-sidebar-brand border-b border-white/5 px-4 lg:px-5">
                     <a href="{{ $adminHomeUrl }}" class="flex min-w-0 flex-1 items-center gap-3">
-                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-sm font-bold text-white shadow-lg shadow-indigo-950/50">A</span>
+                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-brand-600 to-brand-400 text-sm font-extrabold text-white shadow-lg shadow-brand-500/20">A</span>
                         <span class="min-w-0 text-left">
-                            <span class="block truncate text-sm font-semibold text-white">{{ config('app.name') }}</span>
-                            <span class="block truncate text-xs text-gray-500">{{ __('Admin panel') }}</span>
+                            <span class="block truncate text-sm font-bold text-white font-display">{{ config('app.name') }}</span>
+                            <span class="block truncate text-xs text-slate-500 font-semibold">{{ __('Admin panel') }}</span>
                         </span>
                     </a>
                     <button
                         type="button"
                         id="admin-sidebar-close"
-                        class="inline-flex shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-900 p-2 text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white lg:hidden"
+                        class="inline-flex shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 p-2 text-slate-300 transition hover:bg-white/10 hover:text-white lg:hidden"
                         aria-label="{{ __('Close menu') }}"
                     >
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -116,9 +116,9 @@
                     </ul>
                 </nav>
 
-                <div class="shrink-0 border-t border-gray-800 p-3">
-                    <a href="{{ route('frontend.home') }}" class="admin-sidebar-footer-link">
-                        <svg class="h-4 w-4 shrink-0 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <div class="shrink-0 border-t border-white/5 p-3">
+                    <a href="{{ route('frontend.home') }}" class="admin-sidebar-footer-link flex items-center gap-2 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-500 hover:bg-white/5 hover:text-white transition-colors">
+                        <svg class="h-4 w-4 shrink-0 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                         </svg>
                         {{ __('Back to site') }}
@@ -128,12 +128,12 @@
 
             {{-- Main column: top navbar + content --}}
             <div class="flex min-w-0 flex-1 flex-col lg:min-h-screen">
-                <header class="nav-admin-shell">
+                <header class="nav-admin-shell border-b border-white/5 bg-[#030508]/75 backdrop-blur-xl">
                     <div class="flex min-w-0 flex-1 items-center gap-3 sm:gap-4">
                         <button
                             type="button"
                             id="admin-sidebar-open"
-                            class="inline-flex shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white p-2.5 text-gray-700 shadow-sm transition hover:border-gray-300 hover:bg-gray-50 lg:hidden"
+                            class="inline-flex shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 p-2.5 text-slate-300 shadow-sm transition hover:bg-white/10 hover:text-white lg:hidden"
                             aria-label="{{ __('Open menu') }}"
                         >
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -141,52 +141,52 @@
                             </svg>
                         </button>
                         <div class="min-w-0">
-                            <p class="truncate text-[10px] font-bold uppercase tracking-[0.18em] text-gray-500">{{ __('Admin') }}</p>
-                            <h1 class="truncate text-base font-semibold text-gray-900 sm:text-lg">@yield('title', config('app.name'))</h1>
+                            <p class="truncate text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">{{ __('Admin') }}</p>
+                            <h1 class="truncate text-base font-bold text-white font-display sm:text-lg">@yield('title', config('app.name'))</h1>
                         </div>
                     </div>
 
                     <details class="group relative shrink-0">
-                        <summary class="flex cursor-pointer list-none items-center gap-2.5 rounded-xl border border-gray-200 bg-gray-50 px-2 py-2 pr-3 text-sm font-medium text-gray-800 shadow-sm transition hover:border-gray-300 hover:bg-white">
-                            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
+                        <summary class="flex cursor-pointer list-none items-center gap-2.5 rounded-xl border border-white/10 bg-white/5 px-2 py-2 pr-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10">
+                            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white shadow-md">
                                 {{ strtoupper(substr((string) $user->name, 0, 1)) }}
                             </span>
                             <span class="hidden max-w-[9rem] truncate sm:inline">{{ $user->name }}</span>
-                            <svg class="h-4 w-4 shrink-0 text-gray-500 transition group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <svg class="h-4 w-4 shrink-0 text-slate-400 transition group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                 <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
                             </svg>
                         </summary>
-                        <div class="absolute right-0 z-50 mt-2 w-60 rounded-xl border border-gray-200/90 bg-white p-2 shadow-xl shadow-gray-900/15 ring-1 ring-black/5">
-                            <div class="border-b border-gray-100 px-3 py-2.5">
-                                <p class="truncate text-sm font-semibold text-gray-900">{{ $user->name }}</p>
-                                <p class="truncate text-xs text-gray-500">{{ $user->email }}</p>
+                        <div class="absolute right-0 z-50 mt-2 w-60 rounded-xl border border-white/10 bg-[#0c101c] p-2 shadow-2xl">
+                            <div class="border-b border-white/5 px-3 py-2.5">
+                                <p class="truncate text-sm font-bold text-white">{{ $user->name }}</p>
+                                <p class="truncate text-xs text-slate-400">{{ $user->email }}</p>
                             </div>
-                            <a href="{{ route('profile.edit') }}" class="mt-1 block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ __('Profile settings') }}</a>
+                            <a href="{{ route('profile.edit') }}" class="mt-1 block rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors">{{ __('Profile settings') }}</a>
                             <form action="{{ route('logout') }}" method="post" class="mt-1">
                                 @csrf
-                                <button type="submit" class="btn-secondary w-full !justify-start">{{ __('Log out') }}</button>
+                                <button type="submit" class="btn-secondary w-full !justify-start bg-transparent border-none text-slate-300 hover:bg-white/5 hover:text-white">{{ __('Log out') }}</button>
                             </form>
                         </div>
                     </details>
                 </header>
 
-                <main class="flex-1 bg-gray-100 p-4 sm:p-6 lg:p-8">
-                    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-md ring-1 ring-black/5 sm:p-6 lg:p-8">
+                <main class="flex-1 bg-[#030508] p-4 sm:p-6 lg:p-8">
+                    <div class="rounded-3xl border border-white/5 bg-[#0c101c]/60 p-5 shadow-2xl backdrop-blur-md sm:p-6 lg:p-8">
                         @if (session('status'))
-                            <div class="alert-success-rich mb-6" role="status" aria-live="polite">
-                                <span class="mt-0.5 shrink-0 text-green-600" aria-hidden="true">
+                            <div class="alert-success-rich mb-6 bg-green-500/10 border border-green-500/30 text-green-400" role="status" aria-live="polite">
+                                <span class="mt-0.5 shrink-0 text-green-400" aria-hidden="true">
                                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </span>
-                                <p class="min-w-0 flex-1 font-medium leading-relaxed">{{ session('status') }}</p>
+                                <p class="min-w-0 flex-1 font-semibold leading-relaxed">{{ session('status') }}</p>
                             </div>
                         @endif
 
                         @if ($errors->any())
-                            <div class="alert-danger mb-6" role="alert" aria-live="assertive">
-                                <p class="mb-2 text-sm font-semibold">{{ __('Please fix the following:') }}</p>
-                                <ul class="list-inside list-disc space-y-1.5 text-sm font-medium leading-relaxed">
+                            <div class="alert-danger mb-6 bg-red-500/10 border border-red-500/30 text-red-400" role="alert" aria-live="assertive">
+                                <p class="mb-2 text-sm font-bold">{{ __('Please fix the following:') }}</p>
+                                <ul class="list-inside list-disc space-y-1.5 text-xs font-semibold leading-relaxed">
                                     @foreach ($errors->all() as $error)
                                         <li>{{ $error }}</li>
                                     @endforeach
@@ -242,10 +242,10 @@
             </script>
         @endpush
     @else
-        <div class="flex min-h-screen items-center justify-center bg-gray-100 p-6">
-            <div class="max-w-md rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-md ring-1 ring-black/5">
-                <p class="text-gray-600">
-                    <a href="{{ route('login') }}" class="link font-semibold">{{ __('Sign in') }}</a>
+        <div class="flex min-h-screen items-center justify-center bg-[#030508] p-6">
+            <div class="max-w-md rounded-3xl border border-white/5 bg-[#0d1324]/50 p-8 text-center shadow-2xl backdrop-blur-md">
+                <p class="text-slate-400 font-semibold">
+                    <a href="{{ route('login') }}" class="link font-bold text-white hover:underline">{{ __('Sign in') }}</a>
                     {{ __('to access the admin panel.') }}
                 </p>
             </div>

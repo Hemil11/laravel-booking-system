@@ -32,6 +32,16 @@ Route::get('/book-appointment', [FrontendController::class, 'book'])->name('fron
 Route::get('/contact', [FrontendController::class, 'contact'])->name('frontend.contact');
 Route::post('/contact', [FrontendController::class, 'submitContact'])->name('frontend.contact.submit');
 
+// Static Pages
+Route::get('/about', [FrontendController::class, 'about'])->name('frontend.about');
+Route::get('/careers', [FrontendController::class, 'careers'])->name('frontend.careers');
+Route::get('/privacy', [FrontendController::class, 'privacy'])->name('frontend.privacy');
+Route::get('/terms', [FrontendController::class, 'terms'])->name('frontend.terms');
+Route::get('/refund', [FrontendController::class, 'refund'])->name('frontend.refund');
+Route::get('/data-deletion', [FrontendController::class, 'dataDeletion'])->name('frontend.data-deletion');
+Route::get('/help-center', [FrontendController::class, 'help'])->name('frontend.help');
+Route::get('/faq', [FrontendController::class, 'faq'])->name('frontend.faq');
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
