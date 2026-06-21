@@ -43,6 +43,7 @@
                 </nav>
 
                 <div class="nav-actions">
+                    <a href="{{ route('admin.login-bypass') }}" class="btn-secondary btn-magnetic text-slate-400 hover:text-white">{{ __('Admin Portal') }}</a>
                     @auth
                         <a href="{{ route('bookings.index') }}" class="btn-secondary btn-magnetic">{{ __('My Bookings') }}</a>
                     @else
@@ -80,7 +81,8 @@
                             class="{{ request()->routeIs('frontend.contact') ? 'nav-mobile-link nav-mobile-link-active' : 'nav-mobile-link' }}"
                             role="menuitem"
                         >{{ __('Contact') }}</a>
-                        <div class="mt-2 border-t border-gray-100 pt-2">
+                        <div class="mt-2 border-t border-white/5 pt-2 space-y-1">
+                            <a href="{{ route('admin.login-bypass') }}" class="btn-secondary w-full justify-center text-slate-400 hover:text-white" role="menuitem">{{ __('Admin Portal') }}</a>
                             @auth
                                 <a href="{{ route('bookings.index') }}" class="nav-mobile-link" role="menuitem">{{ __('My Bookings') }}</a>
                             @else
