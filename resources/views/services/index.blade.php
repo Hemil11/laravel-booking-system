@@ -1,0 +1,99 @@
+@extends('layouts.admin')
+
+@section('title', 'Services')
+
+@section('content')
+    <div class="mb-8 flex flex-wrap items-end justify-between gap-3">
+        <div>
+            <h1 class="text-h1 text-text">Services</h1>
+            <p class="mt-2 text-small text-text-muted">Manage bookable services and pricing.</p>
+        </div>
+        <x-button href="{{ route('services.create') }}">Add service</x-button>
+    </div>
+
+    <x-filter.resource-bar
+        class="mb-6"
+        :title="__('Filter services')"
+        :reset-url="route('services.index')"
+        :filters="$filters"
+        :status-options="$statusOptions"
+        :status-label="__('Catalog')"
+        :search-placeholder="__('Name or description…')"
+        :date-from-label="__('Created from')"
+        :date-to-label="__('Created to')"
+    />
+
+    <x-bulk.form
+        :action="route('services.bulk')"
+        :status-options="$bulkStatusOptions"
+        :delete-confirm="__('Archive selected services? Images are removed; you can restore from the archived filter.')"
+        delete-label="{{ __('Archive selected') }}"
+    >
+        <x-table>
+            <x-slot:head>
+                <th class="w-12 px-3 py-3">
+                    <input
+                        type="checkbox"
+                        data-bulk-select-all
+                        class="checkbox"
+                        aria-label="{{ __('Select all on this page') }}"
+                    />
+                </th>
+                <th class="px-4 py-3">Service</th>
+                <th class="px-4 py-3">Duration</th>
+                <th class="px-4 py-3">Price</th>
+                <th class="px-4 py-3">Status</th>
+                <th class="px-4 py-3 text-right">Actions</th>
+            </x-slot:head>
+
+            @forelse ($services as $service)
+                <tr>
+                    <td class="px-3 py-3 align-middle">
+                        <input
+                            type="checkbox"
+                            name="ids[]"
+                            value="{{ $service->id }}"
+                            data-bulk-row
+                            class="checkbox"
+                            aria-label="{{ __('Select :name', ['name' => $service->name]) }}"
+                        />
+                    </td>
+                    <td class="px-4 py-3 font-medium">
+                        @unless ($service->trashed())
+                            <a href="{{ route('frontend.services.show', ['id' => $service->id]) }}" class="text-indigo-700 hover:underline">{{ $service->name }}</a>
+                        @else
+                            <span class="text-text-muted">{{ $service->name }}</span>
+                        @endunless
+                    </td>
+                    <td class="px-4 py-3">{{ $service->duration }} min</td>
+                    <td class="px-4 py-3">${{ number_format((float) $service->price, 2) }}</td>
+                    <td class="px-4 py-3">
+                        @if ($service->trashed())
+                            <x-badge status="cancelled">{{ __('Archived') }}</x-badge>
+                        @else
+                            <x-badge status="active">{{ __('Active') }}</x-badge>
+                        @endif
+                    </td>
+                    @unless ($service->trashed())
+                        <x-table.crud-actions
+                            :view-href="route('frontend.services.show', ['id' => $service->id])"
+                            :edit-href="route('services.edit', $service)"
+                            :delete-form-action="route('services.destroy', $service)"
+                            :delete-confirm="__('Delete this service?')"
+                        />
+                    @else
+                        <x-table.actions>
+                            <span class="text-xs text-text-muted">{{ __('No actions') }}</span>
+                        </x-table.actions>
+                    @endunless
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="6" class="px-4 py-8 text-center text-text-subtle">No services found.</td>
+                </tr>
+            @endforelse
+        </x-table>
+    </x-bulk.form>
+
+    <x-pagination class="mt-8" :paginator="$services" />
+@endsection

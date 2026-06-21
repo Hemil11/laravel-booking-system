@@ -1,0 +1,216 @@
+@extends('layouts.admin')
+
+@section('title', __('New booking'))
+
+@section('content')
+    <x-admin.form-page
+        :title="__('Book appointment')"
+        :description="__('Choose staff, service, date, and an available time. Slots update when your selections change.')"
+        :back-href="route('bookings.index')"
+        :back-label="__('All bookings')"
+    >
+        <x-card :header="__('Appointment')">
+            <form method="post" action="{{ route('bookings.store') }}" id="booking-form" class="space-y-10">
+                @csrf
+
+                <x-admin.form-section
+                    :title="__('Service and staff')"
+                    :description="__('Pick who provides the service and which offering to book.')"
+                >
+                    <div class="grid gap-6 md:grid-cols-2">
+                        <x-form.select
+                            name="staff_id"
+                            label="{{ __('Staff') }}"
+                            :options="$staffOptions"
+                            empty-option="{{ __('Select staff…') }}"
+                            :value="old('staff_id', request('staff_id'))"
+                            required
+                        />
+                        <x-form.select
+                            name="service_id"
+                            label="{{ __('Service') }}"
+                            :options="$serviceOptions"
+                            empty-option="{{ __('Select service…') }}"
+                            :value="old('service_id')"
+                            required
+                        />
+                    </div>
+                </x-admin.form-section>
+
+                <x-admin.form-section
+                    :title="__('Date and time')"
+                    :description="__('Only open slots for the chosen day are shown.')"
+                >
+                    <div class="grid gap-6 md:grid-cols-2 md:items-start">
+                        <x-form.input
+                            name="date"
+                            type="date"
+                            label="{{ __('Date') }}"
+                            :value="old('date', request('date'))"
+                            :min="now()->toDateString()"
+                            required
+                        />
+
+                        <div class="space-y-2">
+                            <p class="block text-sm font-semibold text-gray-900">
+                                {{ __('Time slot') }}
+                                <span class="text-danger">*</span>
+                            </p>
+                            @php
+                                $prefillTime = old('time');
+                                if ($prefillTime) {
+                                    $prefillTime = strlen((string) $prefillTime) > 5 ? substr((string) $prefillTime, 0, 5) : (string) $prefillTime;
+                                } elseif (request()->filled('time')) {
+                                    $t = (string) request('time');
+                                    $prefillTime = strlen($t) > 5 ? substr($t, 0, 5) : $t;
+                                } else {
+                                    $prefillTime = '';
+                                }
+                            @endphp
+                            <input type="hidden" id="time" name="time" value="{{ $prefillTime }}" required>
+                            <div
+                                id="slot-grid"
+                                @class([
+                                    'grid grid-cols-2 gap-2 sm:grid-cols-3',
+                                    'rounded-xl border-2 border-red-500 bg-red-50/40 p-2' => $errors->has('time'),
+                                ])
+                            >
+                                <p class="col-span-full rounded-xl border border-dashed border-gray-200 bg-gray-50 px-4 py-6 text-center text-sm text-gray-500">
+                                    {{ __('Choose staff, service, and date to load available times.') }}
+                                </p>
+                            </div>
+                            <p id="slots-hint" class="text-xs text-gray-500"></p>
+                            @error('time')
+                                <p class="text-xs font-medium text-danger" role="alert">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                </x-admin.form-section>
+
+                <x-admin.form-section>
+                    <x-form.textarea
+                        name="notes"
+                        label="{{ __('Notes') }}"
+                        :hint="__('Optional. Shown on the booking detail page.')"
+                        :value="old('notes')"
+                        rows="4"
+                        placeholder="{{ __('Special requests or context (optional)') }}"
+                    />
+                </x-admin.form-section>
+
+                @error('booking')
+                    <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800" role="alert">
+                        {{ $message }}
+                    </div>
+                @enderror
+
+                <x-admin.form-actions>
+                    <x-button type="submit" id="submit-btn" disabled>{{ __('Create booking') }}</x-button>
+                    <x-button variant="outline" href="{{ route('bookings.index') }}">{{ __('Cancel') }}</x-button>
+                </x-admin.form-actions>
+            </form>
+        </x-card>
+    </x-admin.form-page>
+
+    @push('scripts')
+        <script>
+            (function () {
+                const staff = document.getElementById('staff_id');
+                const service = document.getElementById('service_id');
+                const date = document.getElementById('date');
+                const time = document.getElementById('time');
+                const slotGrid = document.getElementById('slot-grid');
+                const hint = document.getElementById('slots-hint');
+                const submitBtn = document.getElementById('submit-btn');
+                const url = @json(route('bookings.available-slots'));
+                const normalizedOldTime = @json($prefillTime);
+
+                function renderPlaceholder(message) {
+                    slotGrid.innerHTML = '';
+                    const el = document.createElement('p');
+                    el.className =
+                        'col-span-full rounded-xl border border-dashed border-gray-200 bg-gray-50 px-4 py-6 text-center text-sm text-gray-500';
+                    el.textContent = message;
+                    slotGrid.appendChild(el);
+                }
+
+                function updateSubmitState() {
+                    submitBtn.disabled = !time.value;
+                }
+
+                function selectSlot(value, button) {
+                    time.value = value;
+                    slotGrid.querySelectorAll('button[data-slot]').forEach(function (el) {
+                        el.className = 'btn-secondary w-full';
+                    });
+                    button.className = 'btn-primary w-full';
+                    updateSubmitState();
+                }
+
+                async function loadSlots() {
+                    renderPlaceholder(@json(__('Loading available slots…')));
+                    time.value = '';
+                    updateSubmitState();
+                    hint.textContent = '';
+
+                    if (!staff.value || !service.value || !date.value) {
+                        renderPlaceholder(@json(__('Choose staff, service, and date to load available times.')));
+                        return;
+                    }
+
+                    const params = new URLSearchParams({ staff_id: staff.value, service_id: service.value, date: date.value });
+                    try {
+                        const res = await fetch(url + '?' + params.toString(), {
+                            headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                            credentials: 'same-origin',
+                        });
+                        const data = await res.json();
+                        if (!res.ok) {
+                            renderPlaceholder(@json(__('Unable to load slots right now.')));
+                            hint.textContent = data.message || @json(__('Could not load slots.'));
+                            return;
+                        }
+                        const slots = data.slots || [];
+                        if (slots.length === 0) {
+                            renderPlaceholder(@json(__('No slots available for this selection.')));
+                            hint.textContent = @json(__('Try another date or staff member.'));
+                            return;
+                        }
+                        slotGrid.innerHTML = '';
+                        slots.forEach(function (s) {
+                            const value = s.start.substring(0, 5);
+                            const btn = document.createElement('button');
+                            btn.type = 'button';
+                            btn.dataset.slot = value;
+                            btn.className = 'btn-secondary w-full';
+                            btn.textContent = s.label;
+                            btn.addEventListener('click', function () {
+                                selectSlot(value, btn);
+                            });
+                            slotGrid.appendChild(btn);
+                        });
+                        if (normalizedOldTime) {
+                            const oldBtn = slotGrid.querySelector('button[data-slot="' + normalizedOldTime + '"]');
+                            if (oldBtn) {
+                                selectSlot(normalizedOldTime, oldBtn);
+                            }
+                        }
+                    } catch (e) {
+                        renderPlaceholder(@json(__('Network error while loading slots.')));
+                        hint.textContent = @json(__('Check your connection and try again.'));
+                    }
+                }
+
+                [staff, service, date].forEach(function (el) {
+                    el.addEventListener('change', loadSlots);
+                });
+
+                if (staff.value && service.value && date.value) {
+                    loadSlots();
+                } else {
+                    updateSubmitState();
+                }
+            })();
+        </script>
+    @endpush
+@endsection
